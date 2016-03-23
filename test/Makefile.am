@@ -10,6 +10,7 @@ endif
 TESTS =                          \
         test-alloc-testing       \
         test-arraylist           \
+        test-bi-tree            \
         test-avl-tree            \
         test-binary-heap         \
         test-binomial-heap       \

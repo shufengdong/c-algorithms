@@ -101,8 +101,8 @@ typedef struct _AVLTreeNode AVLTreeNode;
  */
 
 typedef enum {
-	AVL_TREE_NODE_LEFT = 0,
-	AVL_TREE_NODE_RIGHT = 1
+    AVL_TREE_NODE_LEFT = 0,
+    AVL_TREE_NODE_RIGHT = 1
 } AVLTreeNodeSide;
 
 /**
@@ -147,8 +147,7 @@ void avl_tree_free(AVLTree *tree);
  *                        to allocate the new memory.
  */
 
-AVLTreeNode *avl_tree_insert(AVLTree *tree, AVLTreeKey key,
-                             AVLTreeValue value);
+AVLTreeNode *avl_tree_insert(AVLTree *tree, AVLTreeKey key, AVLTreeValue value);
 
 /**
  * Remove a node from a tree.
