@@ -221,13 +221,93 @@ void test_bi_tree_new(void) {
     BiTree * tree = bi_tree_new();
     int a = 10, b = 3;
     BiTreeNode * rootNode = bi_tree_insert(tree, &a, NULL, BI_TREE_NODE_LEFT);
-    BiTreeNode * rightNode = bi_tree_insert(tree, &b, rootNode, BI_TREE_NODE_RIGHT);
-    assert(tree->num_nodes == 2);
     assert(*(int *)(tree->root_node->value) == a);
+    assert(rootNode->parent == NULL);
+    assert(rootNode->children[BI_TREE_NODE_LEFT] == NULL);
+    assert(rootNode->children[BI_TREE_NODE_RIGHT] == NULL);
+
+    BiTreeNode * rightNode = bi_tree_insert(tree, &b, rootNode, BI_TREE_NODE_RIGHT);
+
+    assert(tree->num_nodes == 2);
     assert(*(int *)(rightNode->value) == b);
+    assert(rightNode->parent == rootNode);
+
     bi_tree_remove_node(tree, rightNode);
     assert(tree->num_nodes == 1);
+    assert(tree->root_node->children[BI_TREE_NODE_RIGHT] == NULL);
+
+    /*测试删除根节点*/
+    bi_tree_remove_node(tree, rootNode);
+    assert(tree->num_nodes == 0);
+
     bi_tree_free(tree);
+}
+
+void test_huffman_tree(void) {
+    int weights[] = {4,7,5,2,9};
+    int tmpWeights[4];/* 个数是weights的len-1 */
+    /* 标志weights和tmpWeights是否已经处理过 */
+    int flags[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    BiTreeNode * nodes[9];
+    int MAXVALUE = 100;
+    int i = 0, j = 0, len = 5;/*len是weights的长度*/
+    int x1, x2, m1, m2; /*x1,x2,m1,m2分别存储最小和次小的位置和节点值*/
+    /*形成len个叶节点 */
+    for (i = 0; i < len; i++) {
+        nodes[i] = (BiTreeNode *)malloc(sizeof(BiTreeNode));
+        nodes[i]->children[BI_TREE_NODE_LEFT] = NULL;
+        nodes[i]->children[BI_TREE_NODE_RIGHT] = NULL;
+        nodes[i]->value = &weights[i];
+        nodes[i]->parent = NULL;
+    }
+
+    for (i = 0; i < len - 1; i++) { /*构造哈夫曼树*/
+        m1 = m2 = MAXVALUE;
+        x1 = x2 = 0;
+        for (j = 0; j < len; j++) {
+            if (flags[j] < 1 && weights[j] < m1) {
+                m2 = m1;
+                x2 = x1;
+                m1 = weights[j];
+                x1 = j;
+            } else if (flags[j] < 1 && weights[j] < m2) {
+                m2 = weights[j];
+                x2 = j;
+            }
+        }
+        for(j = 0; j < i; j++) {
+            if (flags[j + len] < 1 && tmpWeights[j] < m1) {
+                m2 = m1;
+                x2 = x1;
+                m1 = tmpWeights[j];
+                x1 = j + len;
+            } else if (flags[j + len] < 1 && tmpWeights[j] < m2) {
+                m2 = tmpWeights[j];
+                x2 = j + len;
+            }
+        }
+
+        flags[x1] = 1;
+        flags[x2] = 1;
+        tmpWeights[i]  = m1 + m2;
+        nodes[i + len] = (BiTreeNode *)malloc(sizeof(BiTreeNode));
+        nodes[i + len]->children[BI_TREE_NODE_LEFT] = nodes[x1];
+        nodes[i + len]->children[BI_TREE_NODE_RIGHT] = nodes[x2];
+        nodes[i + len]->value = &(tmpWeights[i]);
+        nodes[i + len]->parent = NULL;
+        nodes[x1]->parent = nodes[i + len];
+        nodes[x2]->parent = nodes[i + len];
+        //printf("%d\n", *((int * )nodes[i+len]->value));
+        //printf("%d\n", *((int * )nodes[i + len]->children[BI_TREE_NODE_LEFT]->value));
+        //printf("%d\n", *((int * )nodes[i + len]->children[BI_TREE_NODE_RIGHT]->value));
+    }
+    BiTree * huffmanTree = (BiTree *) malloc(sizeof(BiTree));
+    huffmanTree->root_node = nodes[2 * len - 2];
+    huffmanTree->num_nodes = 2 * len - 1;
+    //assert(*huffmanTree->root_node->value == 28);
+    //assert(*huffmanTree->root_node->children[BI_TREE_NODE_LEFT]->value == 28);
+    //assert(*huffmanTree->root_node->children[BI_TREE_NODE_RIGHT]->value == 28);
+    bi_tree_free(huffmanTree);
 }
 
 void test_expression_tree(void) {
@@ -249,6 +329,7 @@ void test_expression_tree(void) {
 
 static UnitTestFunction tests[] = {
     test_bi_tree_new,
+    test_huffman_tree,
     test_expression_tree,
     NULL
 };

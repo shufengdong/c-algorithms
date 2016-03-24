@@ -78,13 +78,14 @@ BiTreeNode * bi_tree_insert(BiTree *tree, BiTreeValue value,
 
 void bi_tree_remove_node(BiTree *tree, BiTreeNode *node) {
     BiTreeNode *parent = node->parent;
-    if(parent == NULL)
-        return;
-    if(parent->children[BI_TREE_NODE_LEFT] == node) {
-        parent->children[BI_TREE_NODE_LEFT] = NULL;
-    } else if(parent->children[BI_TREE_NODE_RIGHT] == node) {
-        parent->children[BI_TREE_NODE_RIGHT] = NULL;
-    }
+    if(parent != NULL) {
+        if(parent->children[BI_TREE_NODE_LEFT] == node) {
+            parent->children[BI_TREE_NODE_LEFT] = NULL;
+        } else if(parent->children[BI_TREE_NODE_RIGHT] == node) {
+            parent->children[BI_TREE_NODE_RIGHT] = NULL;
+        }
+    } else /*这是根节点*/
+        tree->root_node = NULL;
     bi_tree_free_subtree(tree, node);
 }
 
