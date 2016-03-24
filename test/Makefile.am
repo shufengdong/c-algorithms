@@ -11,6 +11,7 @@ TESTS =                          \
         test-alloc-testing       \
         test-arraylist           \
         test-bi-tree            \
+        test-bs-tree            \
         test-avl-tree            \
         test-binary-heap         \
         test-binomial-heap       \

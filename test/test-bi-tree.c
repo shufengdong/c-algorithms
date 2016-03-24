@@ -120,7 +120,7 @@ int create_expression_tree(BiTree* tree, BiTreeNode* parent, BiTreeNodeSide side
         char * value = (char *)malloc(2 * sizeof(char));
         strncpy(value, p + rpst2, 1);
         *(value + 1) = '\0';
-        BiTreeNode * newNode = bi_tree_insert(tree, value, parent, side);
+        BiTreeNode * newNode = tree->insert(tree, value, parent, side);
         if(create_expression_tree(tree, newNode, BI_TREE_NODE_LEFT, p, rpst2))
             if(create_expression_tree(tree, newNode, BI_TREE_NODE_RIGHT, p+rpst2+1, l-rpst2-1))
                 return 1;
@@ -146,13 +146,13 @@ int create_expression_tree(BiTree* tree, BiTreeNode* parent, BiTreeNodeSide side
                 char * value = (char *)malloc((l + 1) * sizeof(char));
                 strncpy(value, p, l);
                 *(value+l) = '\0';
-                bi_tree_insert(tree, value, parent, side);
+                tree->insert(tree, value, parent, side);
                 return 1;
             } else {//此时表达式首一定是操作符"-"，其余部分被一对括弧括起来
                 char * value = (char *)malloc(2 * sizeof(char));
                 strncpy(value, p, 1);
                 *(value + 1) = '\0';
-                BiTreeNode * newNode = bi_tree_insert(tree, value, parent, side);
+                BiTreeNode * newNode = tree->insert(tree, value, parent, side);
                 if(create_expression_tree(tree, newNode, BI_TREE_NODE_RIGHT, p + 2, l - 3))
                     return 1;
                 else
@@ -163,7 +163,7 @@ int create_expression_tree(BiTree* tree, BiTreeNode* parent, BiTreeNodeSide side
         char * value = (char *)malloc(2 * sizeof(char));
         strncpy(value, p + rpst1, 1);
         *(value + 1) = '\0';
-        BiTreeNode * newNode = bi_tree_insert(tree, value, parent, side);
+        BiTreeNode * newNode = tree->insert(tree, value, parent, side);
         if(create_expression_tree(tree, newNode, BI_TREE_NODE_LEFT, p, rpst1))
             if(create_expression_tree(tree, newNode, BI_TREE_NODE_RIGHT, p+rpst1+1, l-rpst1-1))
                 return 1;
@@ -202,45 +202,45 @@ int doExpressionCal(char * exp, double * rst) {
     int l = strlen(exp);
     printf("Creating expression tree...\n");
     BiTree * tree = bi_tree_new();
-    create_expression_tree(tree, tree->root_node, BI_TREE_NODE_LEFT, exp, l);
+    create_expression_tree(tree, tree->rootNode, BI_TREE_NODE_LEFT, exp, l);
 
     printf("Print tree...\n");
-    in_order_print(tree->root_node);
+    in_order_print(tree->rootNode);
     printf("\n");
 
-    calculate(tree->root_node, rst);
+    calculate(tree->rootNode, rst);
 
     printf("Destroying expression value...\n");
-    post_order_free(tree->root_node);
+    post_order_free(tree->rootNode);
 
     printf("Destroying expression tree...\n");
-    bi_tree_free(tree);
+    tree->free_tree(tree);
 }
 
 void test_bi_tree_new(void) {
     BiTree * tree = bi_tree_new();
     int a = 10, b = 3;
-    BiTreeNode * rootNode = bi_tree_insert(tree, &a, NULL, BI_TREE_NODE_LEFT);
-    assert(*(int *)(tree->root_node->value) == a);
+    BiTreeNode * rootNode = tree->insert(tree, &a, NULL, BI_TREE_NODE_LEFT);
+    assert(*(int *)(tree->rootNode->value) == a);
     assert(rootNode->parent == NULL);
     assert(rootNode->children[BI_TREE_NODE_LEFT] == NULL);
     assert(rootNode->children[BI_TREE_NODE_RIGHT] == NULL);
 
-    BiTreeNode * rightNode = bi_tree_insert(tree, &b, rootNode, BI_TREE_NODE_RIGHT);
+    BiTreeNode * rightNode = tree->insert(tree, &b, rootNode, BI_TREE_NODE_RIGHT);
 
-    assert(tree->num_nodes == 2);
+    assert(tree->nodeNum == 2);
     assert(*(int *)(rightNode->value) == b);
     assert(rightNode->parent == rootNode);
 
-    bi_tree_remove_node(tree, rightNode);
-    assert(tree->num_nodes == 1);
-    assert(tree->root_node->children[BI_TREE_NODE_RIGHT] == NULL);
+    tree->remove(tree, rightNode);
+    assert(tree->nodeNum == 1);
+    assert(tree->rootNode->children[BI_TREE_NODE_RIGHT] == NULL);
 
     /*测试删除根节点*/
-    bi_tree_remove_node(tree, rootNode);
-    assert(tree->num_nodes == 0);
+    tree->remove(tree, rootNode);
+    assert(tree->nodeNum == 0);
 
-    bi_tree_free(tree);
+    tree->free_tree(tree);
 }
 
 void test_huffman_tree(void) {
@@ -301,13 +301,13 @@ void test_huffman_tree(void) {
         //printf("%d\n", *((int * )nodes[i + len]->children[BI_TREE_NODE_LEFT]->value));
         //printf("%d\n", *((int * )nodes[i + len]->children[BI_TREE_NODE_RIGHT]->value));
     }
-    BiTree * huffmanTree = (BiTree *) malloc(sizeof(BiTree));
-    huffmanTree->root_node = nodes[2 * len - 2];
-    huffmanTree->num_nodes = 2 * len - 1;
-    //assert(*huffmanTree->root_node->value == 28);
-    //assert(*huffmanTree->root_node->children[BI_TREE_NODE_LEFT]->value == 28);
-    //assert(*huffmanTree->root_node->children[BI_TREE_NODE_RIGHT]->value == 28);
-    bi_tree_free(huffmanTree);
+    BiTree * huffmanTree = bi_tree_new();
+    huffmanTree->rootNode = nodes[2 * len - 2];
+    huffmanTree->nodeNum = 2 * len - 1;
+    assert(*(int*)(huffmanTree->rootNode->value) == 27);
+    assert(*(int*)(huffmanTree->rootNode->children[BI_TREE_NODE_LEFT]->value) == 11);
+    assert(*(int*)(huffmanTree->rootNode->children[BI_TREE_NODE_RIGHT]->value) == 16);
+    huffmanTree->free_tree(huffmanTree);
 }
 
 void test_expression_tree(void) {
