@@ -39,7 +39,7 @@ struct _BsTreeNode {
  *                         are equal.
  */
 
-typedef int (*BsTreeCompareFunc)(BiTreeValue value1, BiTreeValue value2);
+typedef int (*BsTreeCompareFunc)(BsTreeValue value1, BiTreeValue value2);
 
 struct _BsTree {
     /* base  */
