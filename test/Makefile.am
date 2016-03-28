@@ -1,22 +1,23 @@
 
 AM_CFLAGS = $(TEST_CFLAGS) -I../src -g
 AM_CXXFLAGS = $(AM_CFLAGS)
-LDADD = $(top_builddir)/src/libcalgtest.a libtestframework.a
+LDADD = ../src/.libs/libcalg.a libtestframework.a
 
-if USE_VALGRIND
-TESTS_ENVIRONMENT=./valgrind-wrapper
-endif
+#if USE_VALGRIND
+#TESTS_ENVIRONMENT=./valgrind-wrapper
+#endif
 
 TESTS =                          \
         test-alloc-testing       \
         test-arraylist           \
-        test-bi-tree            \
-        test-bs-tree            \
+        test-bi-tree             \
+        test-bs-tree             \
         test-avl-tree            \
         test-binary-heap         \
         test-binomial-heap       \
         test-bloom-filter        \
         test-cpp                 \
+        test-graph               \
         test-list                \
         test-slist               \
         test-queue               \

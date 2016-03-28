@@ -119,7 +119,6 @@ void bi_tree_initial(BiTree *tree) {
     tree->node_value = &bi_tree_node_value;
     tree->node_child = &bi_tree_node_child;
     tree->node_parent = &bi_tree_node_parent;
-    tree->insert(fd);
 }
 
 void bi_tree_free_subtree(BiTreeNode *node) {
