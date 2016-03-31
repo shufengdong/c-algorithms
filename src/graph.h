@@ -28,6 +28,7 @@ struct _Edge {
 };
 
 struct _Vertex {
+    int id;
     ListEntry * edges;
     VertexValue value;
 };
@@ -45,8 +46,8 @@ struct _Graph {
 
     int (*add_new_vertex)(Graph *_this, VertexValue value);
     int (*add_new_edge)(Graph *_this, Vertex * sourceVertex, Vertex * targetVertex, EdgeValue value);
-    void (*graph_bfs)(Graph *_this, Vertex * firstVertex, traverse_callback callBack);
-    void (*graph_dfs)(Graph *_this, Vertex * firstVertex, traverse_callback callBack);
+    void (*traverse_bfs)(Graph *_this, Vertex * firstVertex, traverse_callback callBack);
+    void (*traverse_dfs)(Graph *_this, Vertex * firstVertex, traverse_callback callBack);
     void (*graph_free)(Graph *_this);
 };
 
