@@ -1,7 +1,7 @@
 
 AM_CFLAGS = $(TEST_CFLAGS) -I../src -g
 AM_CXXFLAGS = $(AM_CFLAGS)
-LDADD = ../src/.libs/libcalg.a libtestframework.a
+LDADD = ../src/libcalgtest.a libtestframework.a
 
 #if USE_VALGRIND
 #TESTS_ENVIRONMENT=./valgrind-wrapper
