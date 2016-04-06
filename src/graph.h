@@ -18,6 +18,8 @@ typedef struct _Vertex Vertex;
 
 typedef struct _Edge Edge;
 
+typedef struct _DijkstraPath DijkstraPath;
+
 typedef struct _MinSpanningTree MinSpanningTree;
 
 typedef void * EdgeValue;
@@ -36,7 +38,12 @@ struct _Vertex {
     VertexValue value;
 };
 
-typedef void (*traverse_callback)(Vertex * v, int isNew);
+typedef void (*traverse_callback)(Vertex * v, int subGraphNo);
+
+struct _DijkstraPath {
+    float * pathCosts;
+    int *vertexIds;
+};
 
 struct _MinSpanningTree {
     float spanningTreeCost;
@@ -58,12 +65,16 @@ struct _Graph {
     void (*traverse_dfs)(Graph *_this, Vertex * firstVertex, traverse_callback callBack);
     MinSpanningTree * (*prim_spanning_tree)(Graph *_this);
     MinSpanningTree * (*kruskal_spanning_tree)(Graph *_this);
+    DijkstraPath * (*dijkstra)(Graph *_this, Vertex * start);
+    float ** (*floyd)(Graph *_this);
     void (*graph_free)(Graph *_this);
 };
 
 Graph * graph_new(GraphType type);
 
 void graph_initial(Graph * g);
+
+int critical_path_method(Graph *_this, Vertex * start, float * earlyTime, float * lateTime);
 
 #ifdef __cplusplus
 }
