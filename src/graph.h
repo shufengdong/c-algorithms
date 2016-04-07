@@ -42,7 +42,7 @@ typedef void (*traverse_callback)(Vertex * v, int subGraphNo);
 
 struct _DijkstraPath {
     float * pathCosts;
-    int *vertexIds;
+    int * vertexIds;
 };
 
 struct _MinSpanningTree {
@@ -65,7 +65,7 @@ struct _Graph {
     void (*traverse_dfs)(Graph *_this, Vertex * firstVertex, traverse_callback callBack);
     MinSpanningTree * (*prim_spanning_tree)(Graph *_this);
     MinSpanningTree * (*kruskal_spanning_tree)(Graph *_this);
-    DijkstraPath * (*dijkstra)(Graph *_this, Vertex * start);
+    void (*dijkstra)(Graph *_this, Vertex * start, DijkstraPath * path);
     float ** (*floyd)(Graph *_this);
     void (*graph_free)(Graph *_this);
 };

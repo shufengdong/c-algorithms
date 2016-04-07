@@ -121,7 +121,12 @@ static void test_graph_dijkstra_avl() {
     e = g->add_new_edge(g, (Vertex *)list_nth_data(g->vertices, 4), (Vertex *)list_nth_data(g->vertices, 5), &edgeValues[7]);
     e->weight = edgeValues[7];
 
-    DijkstraPath * path = g->dijkstra(g, list_nth_data(g->vertices, 0));
+    float nodeCosts[g->vertexNum];
+    int nodeIds[g->vertexNum];
+    DijkstraPath * path = (DijkstraPath *)malloc(sizeof(DijkstraPath));
+    path->pathCosts = nodeCosts;
+    path->vertexIds = nodeIds;
+    g->dijkstra(g, list_nth_data(g->vertices, 0), path);
     assert(*(path->vertexIds) == 1);
     assert(*(path->vertexIds + 1) == 3);
     assert(*(path->vertexIds + 2) == 5);
@@ -134,8 +139,6 @@ static void test_graph_dijkstra_avl() {
     assert(*(path->pathCosts + 3) == 50);
     assert(*(path->pathCosts + 4) == 30);
     assert(*(path->pathCosts + 5) == 60);
-    free(path->vertexIds);
-    free(path->pathCosts);
     free(path);
 
     /*测试floyd方法*/

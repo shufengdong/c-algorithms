@@ -313,29 +313,11 @@ static float ** graph_floyd(Graph * g) {
     return d;
 }
 
-static DijkstraPath * graph_dijkstra_avl(Graph * g, Vertex * start) {
-    DijkstraPath * path = (DijkstraPath *)malloc(sizeof(DijkstraPath));
-    if(path == NULL)
-        return NULL;
-    path->pathCosts = (float *)malloc(g->vertexNum * sizeof(float));
-    if(path->pathCosts == NULL) {
-        free(path);
-        return NULL;
-    }
-    path->vertexIds = (int *)malloc(g->vertexNum * sizeof(int));
-    if(path->vertexIds == NULL) {
-        free(path->pathCosts);
-        free(path);
-        return NULL;
-    }
+static void graph_dijkstra_avl(Graph * g, Vertex * start, DijkstraPath * path) {
     DijkstraPathNode * nodes = (DijkstraPathNode *)malloc(g->vertexNum * sizeof(DijkstraPathNode));
     if(nodes == NULL) {
-        free(path->pathCosts);
-        free(path->vertexIds);
-        free(path);
-        return NULL;
+        return;
     }
-
 
     int i, j, isHandled;
     float oldCost, newCost;
@@ -407,7 +389,6 @@ static DijkstraPath * graph_dijkstra_avl(Graph * g, Vertex * start) {
 	}
  	free(nodes);
 	avl_tree_free(tree);
-	return path;
 }
 
 static void graph_free(Graph * g) {
