@@ -18,7 +18,7 @@ compare-int.c  hash-int.c         hash-table.c    set.c     binary-heap.c \
 bloom-filter.c binomial-heap.c    rb-tree.c       bi-tree.c bs-tree.c     \
 graph.c
 
-libcalgtest_a_CFLAGS=$(TEST_CFLAGS) -DALLOC_TESTING -I../test -g
+libcalgtest_a_CFLAGS=$(TEST_CFLAGS) -DALLOC_TESTING -I../../test -g
 libcalgtest_a_SOURCES=$(SRC) $(MAIN_HEADERFILES)
 
 libcalg_la_CFLAGS=$(MAIN_CFLAGS)

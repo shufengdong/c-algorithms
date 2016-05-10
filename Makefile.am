@@ -9,5 +9,5 @@ pkgconfig_DATA = libcalg-1.0.pc
 
 $(pkgconfig_DATA) : config.status
 
-SUBDIRS=src test doc
+SUBDIRS=src/base src/ieeeformat src/pscpu test doc
 

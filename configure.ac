@@ -1,6 +1,6 @@
 AC_INIT(C Algorithms, 1.2.0, fraggle@removethisbit.gmail.com, c-algorithms)
 AC_CONFIG_AUX_DIR(autotools)
-AC_CONFIG_SRCDIR([src/arraylist.c])
+AC_CONFIG_SRCDIR([src/base/arraylist.c])
 AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE
@@ -11,6 +11,7 @@ AC_PROG_CXX
 AC_PROG_LIBTOOL
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
+
 
 if [[ "$GCC" = "yes" ]]; then
 	is_gcc=true
@@ -76,7 +77,9 @@ AC_OUTPUT([
     Makefile
     libcalg-1.0.pc
     doc/Makefile
-    src/Makefile
-    test/Makefile
+    src/base/Makefile
+    src/ieeeformat/Makefile
+    src/pscpu/Makefile
+	test/Makefile	
 ])
 
