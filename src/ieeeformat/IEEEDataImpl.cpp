@@ -49,7 +49,7 @@ void BusData::parseString(string templine) {
 }
 
 void BusData::toString(char * buffer) {			
-	sprintf(buffer, "%4d %-12.12s %2d%3d %2d %6.3lf%7.2lf%9.3lf%10.3lf%8.3lf%8.3lf %7.2lf %6.3lf%8.1lf%8.1lf%8.4lf%8.4lf %4d", 
+	sprintf(buffer, "%4d %12s %2d%3d %2d %6f%7f%9f%10f%8f%8f %7f %6f%8f%8f%8f%8f %4d",
 		busNumber, name.data(),area, lossZone, busType, finalVoltage, finalAngle, loadP, loadQ, generationP, generationQ, voltageBase,
 		desireV, maximum, minimum, G, B, remoteControlBus); 
 }

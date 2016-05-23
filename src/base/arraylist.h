@@ -47,7 +47,7 @@ extern "C" {
  * A value to be stored in an @ref ArrayList.
  */
 
-typedef void *ArrayListValue;
+typedef void * ArrayListValue;
 
 /**
  * An ArrayList structure.  New ArrayLists can be created using the

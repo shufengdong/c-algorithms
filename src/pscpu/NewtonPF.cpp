@@ -16,17 +16,21 @@ NewtonPF::NewtonPF(PFModel *model) : AbstractPF(model){
 	result = NULL;
 }
 
-void NewtonPF::doPF() {	
+void NewtonPF::doPF() {
+	cout<<"Initial model..."<<endl;
 	bool b = initialModel();
+	cout<<"Initial model finished."<<endl;
 	if(!b) {
-		cout<<"Do power flow failed becase of wrong se model."<<endl;
+		cout<<"Do power flow failed because of wrong se model."<<endl;
 		model->isConverged = false;
 		return;
 	}
 	if(result != NULL)
 		delete[] result;
 	result = new double[getDimension()];
-	b = NewtonAlg::cal2(this, result);	
+	cout<<"Start newton solve ..."<<endl;
+	b = NewtonAlg::cal(this, result);
+    cout<<"Newton solve finished."<<endl;
 	if(b) {
 		int n = model->island->busN;	
 		model->isConverged = true;
@@ -37,7 +41,7 @@ void NewtonPF::doPF() {
 			for(int i = 0; i < n; i++) {
 				model->vTheta[i] = sqrt(result[i] * result[i] + result[i + n] * result[i + n]);
 				model->vTheta[i + n] = atan2(result[i + n], result[i]);
-				//cout<<result[i]<<"\t"<<result[i + n] * 180 / PI<<endl;
+				cout<<result[i]<<"\t"<<result[i + n] * 180 / PI<<endl;
 			}
 		}
 	} else

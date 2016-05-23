@@ -1,14 +1,17 @@
 ACLOCAL_AMFLAGS = -I m4
+check_LIBRARIES=libieeeformattest.a
 lib_LTLIBRARIES=libieeeformat.la
 
 MAIN_HEADERFILES = libieeeformat.hpp
 
 IeeeFormat_HEADERFILES=\
-DefaultIEEEFormatRW.hpp  BranchData.hpp      BusData.hpp      IEEEDataIsland.hpp     \
-InterchangeData.hpp    LossZoneData.hpp    TieLineData.hpp    TitleData.hpp
+ieee-data.h
 
 SRC=\
-DefaultIEEEFormatRW.cpp    IEEEDataImpl.cpp
+ieee-data.c
+
+libieeeformattest_a_CFLAGS=$(TEST_CFLAGS) -DALLOC_TESTING -I../../test -g
+libieeeformattest_a_SOURCES=$(SRC) $(MAIN_HEADERFILES)
 
 libieeeformat_la_CFLAGS=$(MAIN_CFLAGS)
 libieeeformat_la_SOURCES=$(SRC) $(MAIN_HEADERFILES) $(IeeeFormat_HEADERFILES)

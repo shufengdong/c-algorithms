@@ -8,7 +8,7 @@
 using namespace std;
 using namespace cpscpu;
 
-void NewtonAlg::cal(NewtonModel * model, double * result) {
+bool NewtonAlg::cal(NewtonModel * model, double * result) {
     int iterNum = 1;
 	int maxIter = model->getMaxIter();
 
@@ -106,7 +106,8 @@ void NewtonAlg::cal(NewtonModel * model, double * result) {
     }	
 	delete[] z;
 	delete[] z_est;	
-	delete matrix;			
+	delete matrix;
+    return isConverged;
 }
 
 bool NewtonAlg::cal2(NewtonModel * model, double * result) {

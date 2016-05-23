@@ -6,7 +6,7 @@
 namespace cpscpu {
 	class NewtonAlg{
 	public:
-		static void cal(NewtonModel * model, double * result);
+		static bool cal(NewtonModel * model, double * result);
 
 		static bool cal2(NewtonModel * model, double * result);
 

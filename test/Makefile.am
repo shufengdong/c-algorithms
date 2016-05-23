@@ -1,7 +1,7 @@
 
-AM_CFLAGS = $(TEST_CFLAGS) -I../src/base -g
+AM_CFLAGS = $(TEST_CFLAGS) -I../src/pscpu -I../src/ieeeformat -I../src/base -I../include/superlu -I../include/coin -I../include/ipopt -L../src/pscpu/.libs -L../src/ieeeformat/.libs -L../lib/cygwin -g
 AM_CXXFLAGS = $(AM_CFLAGS)
-LDADD = ../src/base/libcalgtest.a libtestframework.a
+LDADD =-lpscpu ../src/ieeeformat/libieeeformattest.a -lipopt -lmumps -lsuperlu -lmetis -llapack -lblas -lgfortran ../src/base/libcalgtest.a  libtestframework.a
 
 #if USE_VALGRIND
 #TESTS_ENVIRONMENT=./valgrind-wrapper
@@ -10,12 +10,12 @@ LDADD = ../src/base/libcalgtest.a libtestframework.a
 TESTS =                          \
         test-alloc-testing       \
         test-arraylist           \
-        test-bi-tree             \
-        test-bs-tree             \
         test-avl-tree            \
+        test-bi-tree             \
         test-binary-heap         \
         test-binomial-heap       \
         test-bloom-filter        \
+        test-bs-tree             \
         test-cpp                 \
         test-graph               \
         test-list                \
@@ -26,7 +26,9 @@ TESTS =                          \
         test-hash-table          \
         test-rb-tree             \
         test-set                 \
-        test-trie
+        test-trie                \
+        test-ieee                \
+        test-pf
 
 check_PROGRAMS = $(TESTS)
 check_LIBRARIES = libtestframework.a
@@ -36,6 +38,7 @@ alloc-testing.c      alloc-testing.h        \
 framework.c          framework.h
 
 test_cpp_SOURCES = test-cpp.cpp
+test_pf_SOURCES = test-pf.cpp
 
 EXTRA_DIST=valgrind-wrapper
 
