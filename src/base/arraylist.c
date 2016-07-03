@@ -31,8 +31,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /* Automatically resizing array */
 
-ArrayList *arraylist_new(unsigned int length)
-{
+ArrayList *arraylist_new(unsigned int length)  {
 	ArrayList *new_arraylist;
 
 	/* If the length is not specified, use a sensible default */
