@@ -73,7 +73,7 @@ AC_SUBST(MAIN_CFLAGS)
 AC_SUBST(TEST_CFLAGS)
 AC_SUBST(ac_aux_dir)
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
     Makefile
     libcalg-1.0.pc
     doc/Makefile
@@ -82,4 +82,4 @@ AC_OUTPUT([
     src/pscpu/Makefile
 	test/Makefile	
 ])
-
+AC_OUTPUT
