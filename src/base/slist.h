@@ -80,7 +80,7 @@ extern "C" {
 typedef struct _SListEntry SListEntry;
 
 /**
- * Structure used to iterate over a list.
+ * 链表迭代器结构，用于遍历单链表
  */
 
 typedef struct _SListIterator SListIterator;
