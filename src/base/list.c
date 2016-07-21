@@ -28,7 +28,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "alloc-testing.h"
 #endif
 
-/* A doubly-linked list */
+/* 双向链表结构 */
 
 struct _ListEntry {
 	ListValue data;
@@ -40,8 +40,7 @@ void list_free(ListEntry *list)
 {
 	ListEntry *entry;
 
-	/* Iterate over each entry, freeing each list entry, until the
-	 * end is reached */
+	/* 遍历所有结点，释放内存 */
 
 	entry = list;
 
@@ -60,7 +59,7 @@ ListEntry *list_prepend(ListEntry **list, ListValue data)
 {
 	ListEntry *newentry;
 
-	/* Create new entry */
+	/* 创建新结点 */
 
 	newentry = malloc(sizeof(ListEntry));
 
@@ -70,7 +69,7 @@ ListEntry *list_prepend(ListEntry **list, ListValue data)
 
 	newentry->data = data;
 
-	/* Hook into the list start */
+	/* 在表头插入结点 */
 
 	if (*list != NULL) {
 		(*list)->prev = newentry;
@@ -87,7 +86,7 @@ ListEntry *list_append(ListEntry **list, ListValue data)
 	ListEntry *rover;
 	ListEntry *newentry;
 
-	/* Create new list entry */
+	/* 创建新结点 */
 
 	newentry = malloc(sizeof(ListEntry));
 
@@ -98,22 +97,22 @@ ListEntry *list_append(ListEntry **list, ListValue data)
 	newentry->data = data;
 	newentry->next = NULL;
 
-	/* Hooking into the list is different if the list is empty */
+	/* 在空表表尾插入结点需不同操作 */
 
 	if (*list == NULL) {
 
-		/* Create the start of the list */
+		/* 创建表头结点 */
 
 		*list = newentry;
 		newentry->prev = NULL;
 
 	} else {
 
-		/* Find the end of list */
+		/* 找到表尾结点 */
 
 		for (rover=*list; rover->next != NULL; rover = rover->next);
 
-		/* Add to the end of list */
+		/* 添加到链表尾部 */
 
 		newentry->prev = rover;
 		rover->next = newentry;
@@ -142,8 +141,7 @@ ListEntry *list_nth_entry(ListEntry *list, unsigned int n)
 	ListEntry *entry;
 	unsigned int i;
 
-	/* Iterate through n list entries to reach the desired entry.
-	 * Make sure we do not reach the end of the list. */
+	/* 通过n个链表结点到达所需结点。并且确保没有达到表尾 */
 
 	entry = list;
 
@@ -162,11 +160,11 @@ ListValue list_nth_data(ListEntry *list, unsigned int n)
 {
 	ListEntry *entry;
 
-	/* Find the specified entry */
+	/* 找到指定的结点 */
 
 	entry = list_nth_entry(list, n);
 
-	/* If out of range, return NULL, otherwise return the data */
+	/* 如果超出范围，返回NULL，否则返回数据 */
 
 	if (entry == NULL) {
 		return LIST_NULL;
@@ -185,7 +183,7 @@ unsigned int list_length(ListEntry *list)
 
 	while (entry != NULL) {
 
-		/* Count the number of entries */
+		/* 计算结点的数量 */
 
 		++length;
 
@@ -202,7 +200,7 @@ ListValue *list_to_array(ListEntry *list)
 	unsigned int length;
 	unsigned int i;
 
-	/* Allocate an array equal in size to the list length */
+	/* 分配空间给数组，数组的长度与链表长度相同 */
 
 	length = list_length(list);
 
@@ -212,17 +210,17 @@ ListValue *list_to_array(ListEntry *list)
 		return NULL;
 	}
 
-	/* Add all entries to the array */
+	/* 将所有的结点的数据加入数组中 */
 
 	rover = list;
 
 	for (i=0; i<length; ++i) {
 
-		/* Add this node's data */
+		/* 把第i个结点的数据加入数组  */
 
 		array[i] = rover->data;
 
-		/* Jump to the next list node */
+		/* 进向下一个结点  */
 
 		rover = rover->next;
 	}
@@ -232,22 +230,21 @@ ListValue *list_to_array(ListEntry *list)
 
 int list_remove_entry(ListEntry **list, ListEntry *entry)
 {
-	/* If the list is empty, or entry is NULL, always fail */
+	/* 如果链表或待删除结点为空，返回0  */
 
 	if (*list == NULL || entry == NULL) {
 		return 0;
 	}
 
-	/* Action to take is different if the entry is the first in the list */
+	/* 删除头结点需要不同操作  */
 
 	if (entry->prev == NULL) {
 
-		/* Unlink the first entry and update the starting pointer */
+		/* 更新链表头指针，并断开头结点 */
 
 		*list = entry->next;
 
-		/* Update the second entry's prev pointer, if there is a second
-		 * entry */
+		/* 如果有第2个结点，更新第2个结点的前向指针 */
 
 		if (entry->next != NULL) {
 			entry->next->prev = NULL;
@@ -255,25 +252,22 @@ int list_remove_entry(ListEntry **list, ListEntry *entry)
 
 	} else {
 
-		/* This is not the first in the list, so we must have a
-		 * previous entry.  Update its 'next' pointer to the new
-		 * value */
+		/* 不是头结点，更新待删除结点之前一个结点的后向指针 */
 
 		entry->prev->next = entry->next;
 
-		/* If there is an entry following this one, update its 'prev'
-		 * pointer to the new value */
+		/* 若待删除结点的后一个结点非空，更新它的前向指针 */
 
 		if (entry->next != NULL) {
 			entry->next->prev = entry->prev;
 		}
 	}
 
-	/* Free the list entry */
+	/* 释放结点内存 */
 
 	free(entry);
 
-	/* Operation successful */
+	/* 删除成功返回1  */
 
 	return 1;
 }
@@ -287,7 +281,7 @@ unsigned int list_remove_data(ListEntry **list, ListEqualFunc callback,
 
 	entries_removed = 0;
 
-	/* Iterate over the entries in the list */
+	/* 遍历链表 */
 
 	rover = *list;
 
@@ -297,18 +291,16 @@ unsigned int list_remove_data(ListEntry **list, ListEqualFunc callback,
 
 		if (callback(rover->data, data)) {
 
-			/* This data needs to be removed.  Unlink this entry
-			 * from the list. */
+			/* 这个数据需要删除，将该结点从链表中断开 */
 
 			if (rover->prev == NULL) {
 
-				/* This is the first entry in the list */
+				/* 该结点为头结点 */
 
 				*list = rover->next;
 			} else {
 
-				/* Point the previous entry at its new
-				 * location */
+				/* 更新前一个结点的后向指针 */
 
 				rover->prev->next = rover->next;
 			}
@@ -317,14 +309,14 @@ unsigned int list_remove_data(ListEntry **list, ListEqualFunc callback,
 				rover->next->prev = rover->prev;
 			}
 
-			/* Free the entry */
+			/* 释放结点内存 */
 
 			free(rover);
 
 			++entries_removed;
 		}
 
-		/* Advance to the next list entry */
+		/* 进入下一个结点 */
 
 		rover = next;
 	}
@@ -332,8 +324,7 @@ unsigned int list_remove_data(ListEntry **list, ListEqualFunc callback,
 	return entries_removed;
 }
 
-/* Function used internally for sorting.  Returns the last entry in the
- * new sorted list */
+/* 用于内部快速排序的函数，返回排序后的尾结点 */
 
 static ListEntry *list_sort_internal(ListEntry **list,
                                      ListCompareFunc compare_func)
@@ -343,20 +334,18 @@ static ListEntry *list_sort_internal(ListEntry **list,
 	ListEntry *less_list, *more_list;
 	ListEntry *less_list_end, *more_list_end;
 
-	/* If there are less than two entries in this list, it is
-	 * already sorted */
+	/* 如果数据少于2个，则已经完成排序 */
 
 	if (*list == NULL || (*list)->next == NULL) {
 		return *list;
 	}
 
-	/* The first entry is the pivot */
+	/* pivot指向头结点 */
 
 	pivot = *list;
 
-	/* Iterate over the list, starting from the second entry.  Sort
-	 * all entries into the less and more lists based on comparisons
-	 * with the pivot */
+	/* 从第二个结点开始遍历链表。根据每个结点与头结点比较的结果，将
+	 * 结点归入less list和more list两个子链表中 */
 
 	less_list = NULL;
 	more_list = NULL;
@@ -367,7 +356,7 @@ static ListEntry *list_sort_internal(ListEntry **list,
 
 		if (compare_func(rover->data, pivot->data) < 0) {
 
-			/* Place this in the less list */
+			/* 把这个结点放入less list中 */
 
 			rover->prev = NULL;
 			rover->next = less_list;
@@ -378,7 +367,7 @@ static ListEntry *list_sort_internal(ListEntry **list,
 
 		} else {
 
-			/* Place this in the more list */
+			/* 把这个结点放入more list中 */
 
 			rover->prev = NULL;
 			rover->next = more_list;
@@ -391,17 +380,16 @@ static ListEntry *list_sort_internal(ListEntry **list,
 		rover = next;
 	}
 
-	/* Sort the sublists recursively */
+	/* 对子链表递归排序 */
 
 	less_list_end = list_sort_internal(&less_list, compare_func);
 	more_list_end = list_sort_internal(&more_list, compare_func);
 
-	/* Create the new list starting from the less list */
+	/* 创新以less less为开始部分新链表 */
 
 	*list = less_list;
 
-	/* Append the pivot to the end of the less list.  If the less list
-	 * was empty, start from the pivot */
+	/* 把pivot结点插入less list的尾部。若less list为空，以povit为表头 */
 
 	if (less_list == NULL) {
 		pivot->prev = NULL;
@@ -411,16 +399,14 @@ static ListEntry *list_sort_internal(ListEntry **list,
 		less_list_end->next = pivot;
 	}
 
-	/* Append the more list after the pivot */
+	/* 在pivot结点后插入more list */
 
 	pivot->next = more_list;
 	if (more_list != NULL) {
 		more_list->prev = pivot;
 	}
 
-	/* Work out what the last entry in the list is.  If the more list was
-	 * empty, the pivot was the last entry.  Otherwise, the end of the
-	 * more list is the end of the total list. */
+	/* 返回链表的尾节点 */
 
 	if (more_list == NULL) {
 		return pivot;
@@ -440,7 +426,7 @@ ListEntry *list_find_data(ListEntry *list,
 {
 	ListEntry *rover;
 
-	/* Iterate over entries in the list until the data is found */
+	/* 遍历链表，直到找到存有指定数据的结点 */
 
 	for (rover=list; rover != NULL; rover=rover->next) {
 		if (callback(rover->data, data) != 0) {
@@ -448,18 +434,18 @@ ListEntry *list_find_data(ListEntry *list,
 		}
 	}
 
-	/* Not found */
+	/* 未找到 */
 
 	return NULL;
 }
 
 void list_iterate(ListEntry **list, ListIterator *iter)
 {
-	/* Start iterating from the beginning of the list. */
+	/* 从表头开始遍历 */
 
 	iter->prev_next = list;
 
-	/* We have not yet read the first item. */
+	/* 还未读入第一个结点，当前遍历到的位置置为空指针. */
 
 	iter->current = NULL;
 }
@@ -468,17 +454,15 @@ int list_iter_has_more(ListIterator *iter)
 {
 	if (iter->current == NULL || iter->current != *iter->prev_next) {
 
-		/* Either we have not read the first entry, the current
-		 * item was removed or we have reached the end of the
-		 * list.  Use prev_next to determine if we have a next
-		 * value to iterate over. */
+		/* 第一个结点还未读入，或已遍历至表尾，或当前遍历到的
+		 * 位置的结点已删除，用 prev_next判断是否存在下一个待
+		 * 遍历结点 */
 
 		return *iter->prev_next != NULL;
 
 	} else {
-		/* The current entry as not been deleted since the last
-		 * call to list_iter_next: there is a next entry if
-		 * current->next is not NULL */
+		/* 当前遍历到的位置的结点存在，用 current->next判断
+		 * 是否存在下一个结点 */
 
 		return iter->current->next != NULL;
 	}
@@ -488,22 +472,20 @@ ListValue list_iter_next(ListIterator *iter)
 {
 	if (iter->current == NULL || iter->current != *iter->prev_next) {
 
-		/* Either we are reading the first entry, we have reached
-		 * the end of the list, or the previous entry was removed.
-		 * Get the next entry with iter->prev_next. */
+		/* 第一个结点还未读入，或已遍历至表尾，或当前遍历到的位置
+		 * 的结点已删除，从prev_next得到下一个结点 */
 
 		iter->current = *iter->prev_next;
 
 	} else {
 
-		/* Last value returned from list_iter_next was not deleted.
-		 * Advance to the next entry. */
+		/* 当前遍历到的位置的结点存在，则遍历下一个结点 */
 
 		iter->prev_next = &iter->current->next;
 		iter->current = iter->current->next;
 	}
 
-	/* Have we reached the end of the list? */
+	/* 判断当前遍历到的位置是否在表尾 */
 
 	if (iter->current == NULL) {
 		return LIST_NULL;
@@ -516,13 +498,12 @@ void list_iter_remove(ListIterator *iter)
 {
 	if (iter->current == NULL || iter->current != *iter->prev_next) {
 
-		/* Either we have not yet read the first item, we have
-		 * reached the end of the list, or we have already removed
-		 * the current value.  Either way, do nothing. */
+		/* 第一个结点还未读入，或已遍历至表尾，或当前遍历到的位置
+		 * 的结点已删除，则不进行操作 */
 
 	} else {
 
-		/* Remove the current entry */
+		/* 删除当前遍历到的位置的结点 */
 
 		*iter->prev_next = iter->current->next;
 
