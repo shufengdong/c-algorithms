@@ -44,154 +44,139 @@ extern "C" {
 #endif
 
 /**
- * A value to be stored in an @ref ArrayList.
+ * 指向数组中数据类型的指针，参考@ref.
  */
 
 typedef void * ArrayListValue;
 
 /**
- * An ArrayList structure.  New ArrayLists can be created using the
- * arraylist_new function.
+ * 动态数组结构，可以使用arraylist_new函数来创建新的动态数组.
  *
- * @see arraylist_new
+ * 参考@see arraylist_new
  */
 
 typedef struct _ArrayList ArrayList;
 
 /**
- * Definition of an @ref ArrayList.
+ * 定义动态数组结构，参考@ref.
  */
 
 struct _ArrayList {
 
-	/** Entries in the array */
+	/** 数组的访问入口. */
 
 	ArrayListValue *data;
 
-	/** Length of the array */
+	/** 数组中已存储的数据数. */
 
 	unsigned int length;
 
-	/** Private data and should not be accessed */
+	/** 数组的最大长度 */
 
 	unsigned int _alloced;
 };
 
 /**
- * Compare two values in an arraylist to determine if they are equal.
+ * 比较数组中的两个数据是否相等.
  *
- * @return Non-zero if the values are equal, zero if they are not equal.
+ * ����ֵ 相等返回非零值，不等返回零.
  */
 
 typedef int (*ArrayListEqualFunc)(ArrayListValue value1,
                                   ArrayListValue value2);
 
 /**
- * Compare two values in an arraylist.  Used by @ref arraylist_sort
- * when sorting values.
+ *比较数组中的两个数据，在arraylist_sort数据排序中使用，参考@ref.
  *
- * @param value1              The first value.
- * @param value2              The second value.
- * @return                    A negative number if value1 should be sorted
- *                            before value2, a positive number if value2 should
- *                            be sorted before value1, zero if the two values
- *                            are equal.
+ * ���� value1              第一个数据.
+ * ���� value2              第二个数据.
+ * ����ֵ                     若value1应排在value2之前，返回负值；若value1等于
+ *                           value2，返回零；若value2应排在value1之前，返回正值
  */
 
 typedef int (*ArrayListCompareFunc)(ArrayListValue value1,
                                     ArrayListValue value2);
 
 /**
- * Allocate a new ArrayList for use.
+ * 创建一个新的动态数组以供使用.
  *
- * @param length         Hint to the initialise function as to the amount
- *                       of memory to allocate initially to the ArrayList.
- *                       If a value of zero is given, a sensible default
- *                       size is used.
- * @return               A new arraylist, or NULL if it was not possible
- *                       to allocate the memory.
+ * @param length         提示初始化函数最初分配给动态数组的内存大小，若
+ *						 length被赋予零或负值，就使用一个合理的默认大小.
+ * @return               一个新的动态数组.如果无法分配内存，返回空指针.
  * @see arraylist_free
  */
 
 ArrayList *arraylist_new(unsigned int length);
 
 /**
- * Destroy an ArrayList and free back the memory it uses.
+ * 销毁动态数组并且释放其占用的内存.
  *
- * @param arraylist      The ArrayList to free.
+ * @param arraylist      被销毁的动态数组.
  */
 
 void arraylist_free(ArrayList *arraylist);
 
 /**
- * Append a value to the end of an ArrayList.
+ * 在动态数组的尾部添加一个数据.
  *
- * @param arraylist      The ArrayList.
- * @param data           The value to append.
- * @return               Non-zero if the request was successful, zero
- *                       if it was not possible to allocate more memory
- *                       for the new entry.
+ * @param arraylist      动态数组.
+ * @param data           添加到末尾的数据.
+ * @return               添加成功返回非零值，如果无法分配更多内存空间返回零.
  */
 
 int arraylist_append(ArrayList *arraylist, ArrayListValue data);
 
 /**
- * Prepend a value to the beginning of an ArrayList.
+ * 在动态数组的头部添加一个数据.
  *
- * @param arraylist      The ArrayList.
- * @param data           The value to prepend.
- * @return               Non-zero if the request was successful, zero
- *                       if it was not possible to allocate more memory
- *                       for the new entry.
+ * @param arraylist      动态数组.
+ * @param data           添加到头部的数据.
+ * @return               添加成功返回非零值，如果无法分配更多内存空间返回零.
  */
 
 int arraylist_prepend(ArrayList *arraylist, ArrayListValue data);
 
 /**
- * Remove the entry at the specified location in an ArrayList.
+ * 清除动态数组中指定下标的内容.
  *
- * @param arraylist      The ArrayList.
- * @param index          The index of the entry to remove.
+ * @param arraylist      动态数组.
+ * @param index          被清除内容所在的下标.
  */
 
 void arraylist_remove(ArrayList *arraylist, unsigned int index);
 
 /**
- * Remove a range of entries at the specified location in an ArrayList.
+ * 清除动态数组中给定范围的内容.
  *
- * @param arraylist      The ArrayList.
- * @param index          The index of the start of the range to remove.
- * @param length         The length of the range to remove.
+ * @param arraylist      动态数组.
+ * @param index          被清除的范围在数组中的下标起始点.
+ * @param length         被清除的范围的长度.
  */
 
 void arraylist_remove_range(ArrayList *arraylist, unsigned int index,
                             unsigned int length);
 
 /**
- * Insert a value at the specified index in an ArrayList.
- * The index where the new value can be inserted is limited by the
- * size of the ArrayList.
+ * 在指定的下标位置插入一个数据.
+ * 插入点的下标受动态数组的大小限制.
  *
- * @param arraylist      The ArrayList.
- * @param index          The index at which to insert the value.
- * @param data           The value.
- * @return               Returns zero if unsuccessful, else non-zero
- *                       if successful (due to an invalid index or
- *                       if it was impossible to allocate more memory).
+ * @param arraylist      动态数组.
+ * @param index          插入数据的下标.
+ * @param data           数据.
+ * @return               如果插入失败(由于下标无效，或者分配内存失败)
+ *                       返回零值；成功返回非零值.
  */
 
 int arraylist_insert(ArrayList *arraylist, unsigned int index,
                      ArrayListValue data);
 
 /**
- * Find the index of a particular value in an ArrayList.
+ * 在动态数组中找到特定数据的最小下标.
  *
- * @param arraylist      The ArrayList to search.
- * @param callback       Callback function to be invoked to compare
- *                       values in the list with the value to be
- *                       searched for.
- * @param data           The value to search for.
- * @return               The index of the value if found, or -1 if not found.
+ * @param arraylist      动态数组.
+ * @param callback       Callback函数被用来比较组中的数据与被搜索数据.
+ * @param data           被搜索的数据.
+ * @return               如果找到对应数据，返回下标；未找到数据，返回-1.
  */
 
 int arraylist_index_of(ArrayList *arraylist,
@@ -199,18 +184,18 @@ int arraylist_index_of(ArrayList *arraylist,
                        ArrayListValue data);
 
 /**
- * Remove all entries from an ArrayList.
+ * 移除动态数组中的所有内容.
  *
- * @param arraylist      The ArrayList.
+ * @param arraylist      动态数组.
  */
 
 void arraylist_clear(ArrayList *arraylist);
 
 /**
- * Sort the values in an ArrayList.
+ * 对动态数组进行排序.
  *
- * @param arraylist      The ArrayList.
- * @param compare_func   Function used to compare values in sorting.
+ * @param arraylist      动态数组.
+ * @param compare_func   排序过程中用来比较数据的函数.
  */
 
 void arraylist_sort(ArrayList *arraylist, ArrayListCompareFunc compare_func);
