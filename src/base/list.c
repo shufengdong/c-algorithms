@@ -141,7 +141,7 @@ ListEntry *list_nth_entry(ListEntry *list, unsigned int n)
 	ListEntry *entry;
 	unsigned int i;
 
-	/* 通过n个链表结点到达所需结点。并且确保没有达到表尾 */
+	/* 通过n个链表结点到达所需结点，并且确保没有达到表尾 */
 
 	entry = list;
 
@@ -220,7 +220,7 @@ ListValue *list_to_array(ListEntry *list)
 
 		array[i] = rover->data;
 
-		/* 进向下一个结点  */
+		/* 进入下一个结点  */
 
 		rover = rover->next;
 	}
@@ -236,7 +236,7 @@ int list_remove_entry(ListEntry **list, ListEntry *entry)
 		return 0;
 	}
 
-	/* 删除头结点需要不同操作  */
+	/* 删除第1个结点需要不同操作  */
 
 	if (entry->prev == NULL) {
 
@@ -445,7 +445,7 @@ void list_iterate(ListEntry **list, ListIterator *iter)
 
 	iter->prev_next = list;
 
-	/* 还未读入第一个结点，当前遍历到的位置置为空指针. */
+	/* 还未读入第一个结点，当前遍历到的位置置为空指针 */
 
 	iter->current = NULL;
 }
