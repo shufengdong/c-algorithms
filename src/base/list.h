@@ -58,28 +58,25 @@ extern "C" {
 #endif
 
 /**
- * Represents an entry in a doubly-linked list.  The empty list is
- * represented by a NULL pointer. To initialise a new doubly linked
- * list, simply create a variable of this type
- * containing a pointer to NULL.
+ * 双向链表结构.
  */
 
 typedef struct _ListEntry ListEntry;
 
 /**
- * Structure used to iterate over a list.
+ * 链表迭代器结构，用于遍历链表.
  */
 
 typedef struct _ListIterator ListIterator;
 
 /**
- * A value stored in a list.
+ * 指向链表中存储的数据的指针
  */
 
 typedef void *ListValue;
 
 /**
- * Definition of a @ref ListIterator.
+ * 定义链表迭代器结构，参考@ref ListIterator.
  */
 
 struct _ListIterator {
@@ -88,39 +85,33 @@ struct _ListIterator {
 };
 
 /**
- * A null @ref ListValue.
+ * 定义链表中数据的空指针，参考@ref.
  */
 
 #define LIST_NULL ((void *) 0)
 
 /**
- * Callback function used to compare values in a list when sorting.
+ * 在排序时比较链表中两个元素数据的函数.
  *
- * @param value1      The first value to compare.
- * @param value2      The second value to compare.
- * @return            A negative value if value1 should be sorted before
- *                    value2, a positive value if value1 should be sorted
- *                    after value2, zero if value1 and value2 are equal.
+ * @return    如果value1应排在value2之前，返回正数,
+ *            如果value1应排在value2后面，返回负数,
+ *            如果value1 and value2相等，返回0.
  */
 
 typedef int (*ListCompareFunc)(ListValue value1, ListValue value2);
 
 /**
- * Callback function used to determine of two values in a list are
- * equal.
+ * 判断链表中两个元素数据是否相等.
  *
- * @param value1      The first value to compare.
- * @param value2      The second value to compare.
- * @return            A non-zero value if value1 and value2 are equal, zero
- *                    if they are not equal.
+ * @return   如果value1 and value2相等,返回非零值，如果不相等返回0.
  */
 
 typedef int (*ListEqualFunc)(ListValue value1, ListValue value2);
 
 /**
- * Free an entire list.
+ * 释放整个链表内存.
  *
- * @param list         The list to free.
+ * @param list      表头指针.
  */
 
 void list_free(ListEntry *list);
@@ -128,138 +119,129 @@ void list_free(ListEntry *list);
 /**
  * Prepend a value to the start of a list.
  *
- * @param list         Pointer to the list to prepend to.
- * @param data         The value to prepend.
- * @return             The new entry in the list, or NULL if it was not
- *                     possible to allocate the memory for the new entry.
+ * 在链表头插入结点.
+ *
+ * @param list      表头指针.
+ * @param data      待插入的数据.
+ * @return          返回新结点的指针，如果新结点内存分配失败，返回NULL.
  */
 
 ListEntry *list_prepend(ListEntry **list, ListValue data);
 
 /**
- * Append a value to the end of a list.
+ * 在链表尾插入结点.
  *
- * @param list         Pointer to the list to append to.
- * @param data         The value to append.
- * @return             The new entry in the list, or NULL if it was not
- *                     possible to allocate the memory for the new entry.
+ * @param list      表头指针.
+ * @param data      待插入的数据.
+ * @return          返回新结点的指针，如果新结点内存分配失败，返回NULL.
  */
 
 ListEntry *list_append(ListEntry **list, ListValue data);
 
 /**
- * Retrieve the previous entry in a list.
+ * 获取链表中上一个结点的指针.
  *
- * @param listentry    Pointer to the list entry.
- * @return             The previous entry in the list, or NULL if this
- *                     was the first entry in the list.
+ * @param listentry    结点指针.
+ * @return             返回上一个结点的指针，若当前为第一个结点则返回NULL.
  */
 
 ListEntry *list_prev(ListEntry *listentry);
 
 /**
- * Retrieve the next entry in a list.
+ * 获取链表中下一个结点的指针.
  *
- * @param listentry    Pointer to the list entry.
- * @return             The next entry in the list, or NULL if this was the
- *                     last entry in the list.
+ * @param listentry    结点指针.
+ * @return             返回下一个结点的指针，若当前为尾结点则返回NULL.
  */
 
 ListEntry *list_next(ListEntry *listentry);
 
 /**
- * Retrieve the value at a list entry.
+ * 返回结点中存储的数据.
  *
- * @param listentry    Pointer to the list entry.
- * @return             The value stored at the list entry.
+ * @param listentry    结点指针.
+ * @return             返回结点中的数据.
  */
 
 ListValue list_data(ListEntry *listentry);
 
 /**
- * Retrieve the entry at a specified index in a list.
+ * 得到指向第n个结点的指针.
  *
- * @param list       The list.
- * @param n          The index into the list .
- * @return           The entry at the specified index, or NULL if out of range.
+ * @param list       表头指针.
+ * @param n          序号.
+ * @return           返回序号为n的结点指针，如果序号超出范围返回NULL.
  */
 
 ListEntry *list_nth_entry(ListEntry *list, unsigned int n);
 
 /**
- * Retrieve the value at a specified index in the list.
+ * 获取第n个结点的数据.
  *
- * @param list       The list.
- * @param n          The index into the list.
- * @return           The value at the specified index, or @ref LIST_NULL if
- *                   unsuccessful.
+ * @param list       表头指针.
+ * @param n          序号.
+ * @return           返回序号为n的结点的数据，如果失败返回SLIST_NULL，参考@ref.
  */
 
 ListValue list_nth_data(ListEntry *list, unsigned int n);
 
 /**
- * Find the length of a list.
+ * 得到链表的长度
  *
- * @param list       The list.
- * @return           The number of entries in the list.
+ * @param list       表头指针.
+ * @return           返回链表中结点的个数.
  */
 
 unsigned int list_length(ListEntry *list);
 
 /**
- * Create a C array containing the contents of a list.
+ * 创建一个包含链表中内容的数组.
  *
- * @param list       The list.
- * @return           A newly-allocated C array containing all values in the
- *                   list, or NULL if it was not possible to allocate the
- *                   memory.  The length of the array is equal to the length
- *                   of the list (see @ref list_length).
+ * @param list       表头指针.
+ * @return           返回新建的数组，如果数组内存申请失败返回NULL.
+ *                   数组的长度和链表的长度相等(参考@ref list_length).
  */
 
 ListValue *list_to_array(ListEntry *list);
 
 /**
- * Remove an entry from a list.
+ * 删除一个结点.
  *
- * @param list       Pointer to the list.
- * @param entry      The list entry to remove .
- * @return           If the entry is not found in the list, returns zero,
- *                   else returns non-zero.
+ * @param list       表头指针.
+ * @param entry      待删除结点.
+ * @return           成功删除返回非零数，结点不存在返回零.
  */
 
 int list_remove_entry(ListEntry **list, ListEntry *entry);
 
 /**
- * Remove all occurrences of a particular value from a list.
+ * 删除所有存有特定数据的结点.
  *
- * @param list       Pointer to the list.
- * @param callback   Function to invoke to compare values in the list
- *                   with the value to be removed.
- * @param data       The value to remove from the list.
- * @return           The number of entries removed from the list.
+ * @param list       表头指针.
+ * @param callback   Callback函数用于比较表中数据与待删除数据.
+ * @param data       需要删除的数据.
+ * @return           返回删除的结点数.
  */
 
 unsigned int list_remove_data(ListEntry **list, ListEqualFunc callback,
                               ListValue data);
 
 /**
- * Sort a list.
+ * 对链表排序
  *
- * @param list          Pointer to the list to sort.
- * @param compare_func  Function used to compare values in the list.
+ * @param list          表头指针.
+ * @param compare_func  函数用于比较结点中的数据，由用户定义.
  */
 
 void list_sort(ListEntry **list, ListCompareFunc compare_func);
 
 /**
- * Find the entry for a particular value in a list.
+ *查找存有特定数据的结点
  *
- * @param list           The list to search.
- * @param callback       Function to invoke to compare values in the list
- *                       with the value to be searched for.
- * @param data           The value to search for.
- * @return               The list entry of the item being searched for, or
- *                       NULL if not found.
+ * @param list           表头指针.
+ * @param callback       Callback函数用于比较表中数据与待查找的数据是否相等.
+ * @param data           待查找数据.
+ * @return               返回找到的第一个结点，若未找到返回NULL.
  */
 
 ListEntry *list_find_data(ListEntry *list,
@@ -267,40 +249,36 @@ ListEntry *list_find_data(ListEntry *list,
                           ListValue data);
 
 /**
- * Initialise a @ref ListIterator structure to iterate over a list.
+ * 初始化一个链表迭代器，用于遍历链表，参考@ref.
  *
- * @param list           A pointer to the list to iterate over.
- * @param iter           A pointer to an iterator structure to initialise.
+ * @param list           表头指针.
+ * @param iter           指向初始化的链表迭代器的指针，参考@ref.
  */
 
 void list_iterate(ListEntry **list, ListIterator *iter);
 
 /**
- * Determine if there are more values in the list to iterate over.
+ * 判断链表中是否还有更多数据待遍历.没有返回0，有则返回非零数
  *
- * @param iterator       The list iterator.
- * @return               Zero if there are no more values in the list to
- *                       iterate over, non-zero if there are more values to
- *                       read.
+ * @param iterator       链表迭代器.
+ * @return               还有更多的数据待遍历则返回非零数，没有则返回0.
  */
 
 int list_iter_has_more(ListIterator *iterator);
 
 /**
- * Using a list iterator, retrieve the next value from the list.
+ * 用链表迭代器获取链表中的下一个数据.
  *
- * @param iterator       The list iterator.
- * @return               The next value from the list, or @ref LIST_NULL if
- *                       there are no more values in the list.
+ * @param iterator       链表迭代器.
+ * @return               返回下一个数据，如果不存在则返回LIST_NULL.
  */
 
 ListValue list_iter_next(ListIterator *iterator);
 
 /**
- * Delete the current entry in the list (the value last returned from
- * list_iter_next)
+ * 删除当前遍历到的位置的结点(最后一次从 slist_iter_next返回的数据，参考@ref)
  *
- * @param iterator       The list iterator.
+ * @param iterator       链表迭代器.
  */
 
 void list_iter_remove(ListIterator *iterator);
