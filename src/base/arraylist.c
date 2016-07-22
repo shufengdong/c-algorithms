@@ -29,19 +29,18 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "alloc-testing.h"
 #endif
 
-/* Automatically resizing array */
+/* 创建自动调整长度的动态数组 */
 
-ArrayList *arraylist_new(unsigned int length)  {
+ArrayList *arraylist_new(unsigned int length){
 	ArrayList *new_arraylist;
 
-	/* If the length is not specified, use a sensible default */
+	/* 如果数组的长度不合法(小于等于0)，使用一个合理的默认值 */
 
 	if (length <= 0) {
 		length = 16;
 	}
 
-	/* Allocate the new ArrayList and fill in the fields.  There are
-	 * initially no entries. */
+	/* 给一个新的动态数组分配空间，并且进行赋值 */
 
 	new_arraylist = (ArrayList *) malloc(sizeof(ArrayList));
 
@@ -52,7 +51,7 @@ ArrayList *arraylist_new(unsigned int length)  {
 	new_arraylist->_alloced = length;
 	new_arraylist->length = 0;
 
-	/* Allocate the data array */
+	/* 给data分配内存地址 */
 
 	new_arraylist->data = malloc(length * sizeof(ArrayListValue));
 
@@ -64,9 +63,8 @@ ArrayList *arraylist_new(unsigned int length)  {
 	return new_arraylist;
 }
 
-void arraylist_free(ArrayList *arraylist)
-{
-	/* Do not free if a NULL pointer is passed */
+void arraylist_free(ArrayList *arraylist){
+	/* 不可对NULL释放内存 */
 
 	if (arraylist != NULL) {
 		free(arraylist->data);
@@ -74,16 +72,15 @@ void arraylist_free(ArrayList *arraylist)
 	}
 }
 
-static int arraylist_enlarge(ArrayList *arraylist)
-{
+static int arraylist_enlarge(ArrayList *arraylist){
 	ArrayListValue *data;
 	unsigned int newsize;
 
-	/* Double the allocated size */
+	/* 将已分配的数组内存空间扩展为原来的2倍 */
 
 	newsize = arraylist->_alloced * 2;
 
-	/* Reallocate the array to the new size */
+	/* 给数组重新分配新的内存空间 */
 
 	data = realloc(arraylist->data, sizeof(ArrayListValue) * newsize);
 
@@ -98,15 +95,14 @@ static int arraylist_enlarge(ArrayList *arraylist)
 }
 
 int arraylist_insert(ArrayList *arraylist, unsigned int index,
-                     ArrayListValue data)
-{
-	/* Sanity check the index */
+                     ArrayListValue data){
+	/* 检查下标是否越界 */
 
 	if (index > arraylist->length) {
 		return 0;
 	}
 
-	/* Increase the size if necessary */
+	/* 必要时扩展数组长度 */
 
 	if (arraylist->length + 1 > arraylist->_alloced) {
 		if (!arraylist_enlarge(arraylist)) {
@@ -114,14 +110,13 @@ int arraylist_insert(ArrayList *arraylist, unsigned int index,
 		}
 	}
 
-	/* Move the contents of the array forward from the index
-	 * onwards */
+	/* 把待插入位置及之后的数组内容后移一位 */
 
 	memmove(&arraylist->data[index + 1],
 	        &arraylist->data[index],
 	        (arraylist->length - index) * sizeof(ArrayListValue));
 
-	/* Insert the new entry at the index */
+	/*在下标为index的位置插入数据 */
 
 	arraylist->data[index] = data;
 	++arraylist->length;
@@ -129,46 +124,48 @@ int arraylist_insert(ArrayList *arraylist, unsigned int index,
 	return 1;
 }
 
-int arraylist_append(ArrayList *arraylist, ArrayListValue data)
-{
+/* 在数组数据尾部插入数据 */
+
+int arraylist_append(ArrayList *arraylist, ArrayListValue data){
 	return arraylist_insert(arraylist, arraylist->length, data);
 }
 
-int arraylist_prepend(ArrayList *arraylist, ArrayListValue data)
-{
+/* 在数组首插入数据 */
+int arraylist_prepend(ArrayList *arraylist, ArrayListValue data){
 	return arraylist_insert(arraylist, 0, data);
 }
 
+/* 移除指定范围的内容 */
+
 void arraylist_remove_range(ArrayList *arraylist, unsigned int index,
-                            unsigned int length)
-{
-	/* Check this is a valid range */
+                            unsigned int length){
+	/* 检查范围是否合法 */
 
 	if (index > arraylist->length || index + length > arraylist->length) {
 		return;
 	}
 
-	/* Move back the entries following the range to be removed */
+	/* 把移除范围之后数组的内容前移 */
 
 	memmove(&arraylist->data[index],
 	        &arraylist->data[index + length],
 	        (arraylist->length - (index + length))
 	            * sizeof(ArrayListValue));
 
-	/* Decrease the counter */
+	/* 新数组的长度 */
 
 	arraylist->length -= length;
 }
 
-void arraylist_remove(ArrayList *arraylist, unsigned int index)
-{
+/* 移除指定下标的内容 */
+void arraylist_remove(ArrayList *arraylist, unsigned int index){
 	arraylist_remove_range(arraylist, index, 1);
 }
 
+/* 查找指定元素 */
 int arraylist_index_of(ArrayList *arraylist,
                        ArrayListEqualFunc callback,
-                       ArrayListValue data)
-{
+                       ArrayListValue data){
 	unsigned int i;
 
 	for (i=0; i<arraylist->length; ++i) {
@@ -179,42 +176,41 @@ int arraylist_index_of(ArrayList *arraylist,
 	return -1;
 }
 
-void arraylist_clear(ArrayList *arraylist)
-{
-	/* To clear the list, simply set the length to zero */
+/* 清除数组 */
+void arraylist_clear(ArrayList *arraylist){
+	/* 将数组长度设为0即可清理数组 */
 
 	arraylist->length = 0;
 }
 
+/* 数组排序 */
 static void arraylist_sort_internal(ArrayListValue *list_data,
                                     unsigned int list_length,
-                                    ArrayListCompareFunc compare_func)
-{
+                                    ArrayListCompareFunc compare_func){
 	ArrayListValue pivot;
 	ArrayListValue tmp;
 	unsigned int i;
 	unsigned int list1_length;
 	unsigned int list2_length;
 
-	/* If less than two items, it is always sorted. */
+	/* 如果数据少于2个，则已经完成排序. */
 
 	if (list_length <= 1) {
 		return;
 	}
 
-	/* Take the last item as the pivot. */
+	/* 将最后一个数据赋值给pivot. */
 
 	pivot = list_data[list_length-1];
 
-	/* Divide the list into two lists:
+	/* 将数组分为两组:
 	 *
-	 * List 1 contains data less than the pivot.
-	 * List 2 contains data more than the pivot.
+	 * List 1 包含小于pivot的数据.
+	 * List 2 包含大于pivot的数据.
 	 *
-	 * As the lists are build up, they are stored sequentially after
-	 * each other, ie. list_data[list1_length-1] is the last item
-	 * in list 1, list_data[list1_length] is the first item in
-	 * list 2.
+	 * 两个组建立之后，它们在数组中顺序排列.
+     * 亦即：list_data[list1_length-1]是组1中的最后一个数据，
+     * list_data[list1_length]是组2中的第一个数据.
 	 */
 
 	list1_length = 0;
@@ -223,9 +219,7 @@ static void arraylist_sort_internal(ArrayListValue *list_data,
 
 		if (compare_func(list_data[i], pivot) < 0) {
 
-			/* This should be in list 1.  Therefore it is in the
-			 * wrong position. Swap the data immediately following
-			 * the last item in list 1 with this data. */
+			/* 数据应在list 1中，故其处于错误的位置，将此数据与紧跟list 1最后一项的数据互换 */
 
 			tmp = list_data[i];
 			list_data[i] = list_data[list1_length];
@@ -234,27 +228,24 @@ static void arraylist_sort_internal(ArrayListValue *list_data,
 			++list1_length;
 
 		} else {
-			/* This should be in list 2.  This is already in the
-			 * right position. */
+			/* 数据应在list 2中，故其已经位于正确的位置 */
 		}
 	}
 
-	/* The length of list 2 can be calculated. */
+	/* list 2的长度可以计算得到 */
 
 	list2_length = list_length - list1_length - 1;
 
-	/* list_data[0..list1_length-1] now contains all items which are
-	 * before the pivot.
-	 * list_data[list1_length..list_length-2] contains all items after
-	 * or equal to the pivot. */
+	/* list_data[0 ~ list1_length-1]现在包含了所有排序在pivot之前的数据，
+     * list_data[list1_length ~ list_length-2]包含了所有排序在pivot之后
+     * 或者等于pivot的数据 */
 
-	/* Move the pivot into place, by swapping it with the item
-	 * immediately following the end of list 1.  */
+	/* 通过互换pivot与list 2的第一个数据，将pivot移至正确的位置  */
 
 	list_data[list_length-1] = list_data[list1_length];
 	list_data[list1_length] = pivot;
 
-	/* Recursively sort the sublists. */
+	/* 使用递归进行排序 */
 
 	arraylist_sort_internal(list_data, list1_length, compare_func);
 
@@ -264,7 +255,7 @@ static void arraylist_sort_internal(ArrayListValue *list_data,
 
 void arraylist_sort(ArrayList *arraylist, ArrayListCompareFunc compare_func)
 {
-	/* Perform the recursive sort */
+	/* 执行递归排序 */
 
 	arraylist_sort_internal(arraylist->data, arraylist->length,
 	                        compare_func);
