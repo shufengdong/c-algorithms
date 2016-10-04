@@ -60,7 +60,7 @@ extern "C" {
 #endif
 
 /**
- * A red-black tree balanced binary tree.
+ * 红黑树
  *
  * @see rb_tree_new
  */
@@ -70,23 +70,23 @@ typedef struct _RBTree RBTree;
 /**
  * A key for an @ref RBTree.
  */
-
+/* 红黑树关键字 */
 typedef void *RBTreeKey;
 
 /**
  * A value stored in an @ref RBTree.
  */
-
+/* 红黑树中存储的数据 */
 typedef void *RBTreeValue;
 
 /**
  * A null @ref RBTreeValue.
  */
-
+/* 红黑树的空指针数据 */
 #define RB_TREE_NULL ((void *) 0)
 
 /**
- * A node in a red-black tree.
+ * 红黑树节点
  *
  * @see rb_tree_node_left_child
  * @see rb_tree_node_right_child
@@ -98,7 +98,7 @@ typedef void *RBTreeValue;
 typedef struct _RBTreeNode RBTreeNode;
 
 /**
- * Type of function used to compare keys in a red-black tree.
+ * 比较红黑树关键字的函数
  *
  * @param data1            The first key.
  * @param data2            The second key.
@@ -111,7 +111,7 @@ typedef struct _RBTreeNode RBTreeNode;
 typedef int (*RBTreeCompareFunc)(RBTreeValue data1, RBTreeValue data2);
 
 /**
- * Each node in a red-black tree is either red or black.
+ * 红黑树节点的红黑颜色标记
  */
 
 typedef enum {
@@ -122,14 +122,14 @@ typedef enum {
 /**
  * A @ref RBTreeNode can have left and right children.
  */
-
+/* 红黑树的左、右孩子标记 */
 typedef enum {
 	RB_TREE_NODE_LEFT = 0,
 	RB_TREE_NODE_RIGHT = 1
 } RBTreeNodeSide;
 
 /**
- * Create a new red-black tree.
+ * 建立一棵新的红黑树
  *
  * @param compare_func    Function to use when comparing keys in the tree.
  * @return                A new red-black tree, or NULL if it was not possible
@@ -139,7 +139,7 @@ typedef enum {
 RBTree *rb_tree_new(RBTreeCompareFunc compare_func);
 
 /**
- * Destroy a red-black tree.
+ * 销毁一棵红黑树
  *
  * @param tree            The tree to destroy.
  */
@@ -147,7 +147,7 @@ RBTree *rb_tree_new(RBTreeCompareFunc compare_func);
 void rb_tree_free(RBTree *tree);
 
 /**
- * Insert a new key-value pair into a red-black tree.
+ * 在红黑树中插入一个节点
  *
  * @param tree            The tree.
  * @param key             The key to insert.
@@ -160,7 +160,7 @@ void rb_tree_free(RBTree *tree);
 RBTreeNode *rb_tree_insert(RBTree *tree, RBTreeKey key, RBTreeValue value);
 
 /**
- * Remove a node from a tree.
+ * 删除一个给定的节点
  *
  * @param tree            The tree.
  * @param node            The node to remove
@@ -169,8 +169,7 @@ RBTreeNode *rb_tree_insert(RBTree *tree, RBTreeKey key, RBTreeValue value);
 void rb_tree_remove_node(RBTree *tree, RBTreeNode *node);
 
 /**
- * Remove an entry from a tree, specifying the key of the node to
- * remove.
+ * 给定关键字，删除一个节点
  *
  * @param tree            The tree.
  * @param key             The key of the node to remove.
@@ -182,8 +181,7 @@ void rb_tree_remove_node(RBTree *tree, RBTreeNode *node);
 int rb_tree_remove(RBTree *tree, RBTreeKey key);
 
 /**
- * Search a red-black tree for a node with a particular key.  This uses
- * the tree as a mapping.
+ * 给定关键字，查找节点并返回该节点的指针
  *
  * @param tree            The red-black tree to search.
  * @param key             The key to search for.
@@ -205,11 +203,11 @@ RBTreeNode *rb_tree_lookup_node(RBTree *tree, RBTreeKey key);
  *                        RB_TREE_NULL if no entry with the given key is
  *                        found.
  */
-
+/* 给定关键字，查找节点并返回节点中的数据 */
 RBTreeValue rb_tree_lookup(RBTree *tree, RBTreeKey key);
 
 /**
- * Find the root node of a tree.
+ * 查找红黑树的根节点
  *
  * @param tree            The tree.
  * @return                The root node of the tree, or NULL if the tree is
@@ -219,7 +217,7 @@ RBTreeValue rb_tree_lookup(RBTree *tree, RBTreeKey key);
 RBTreeNode *rb_tree_root_node(RBTree *tree);
 
 /**
- * Retrieve the key for a given tree node.
+ * 获取给定节点的关键字
  *
  * @param node            The tree node.
  * @return                The key to the given node.
@@ -228,7 +226,7 @@ RBTreeNode *rb_tree_root_node(RBTree *tree);
 RBTreeKey rb_tree_node_key(RBTreeNode *node);
 
 /**
- * Retrieve the value at a given tree node.
+ * 获取给定节点的数据
  *
  * @param node            The tree node.
  * @return                The value at the given node.
@@ -237,7 +235,7 @@ RBTreeKey rb_tree_node_key(RBTreeNode *node);
 RBTreeValue rb_tree_node_value(RBTreeNode *node);
 
 /**
- * Get a child of a given tree node.
+ * 查找给定节点的孩子节点
  *
  * @param node            The tree node.
  * @param side            The side relative to the node.
@@ -248,7 +246,7 @@ RBTreeValue rb_tree_node_value(RBTreeNode *node);
 RBTreeNode *rb_tree_node_child(RBTreeNode *node, RBTreeNodeSide side);
 
 /**
- * Find the parent node of a given tree node.
+ * 查找给定节点的双亲节点
  *
  * @param node            The tree node.
  * @return                The parent node of the tree node, or NULL if
@@ -258,7 +256,7 @@ RBTreeNode *rb_tree_node_child(RBTreeNode *node, RBTreeNodeSide side);
 RBTreeNode *rb_tree_node_parent(RBTreeNode *node);
 
 /**
- * Find the height of a subtree.
+ * 计算子树的高度
  *
  * @param node            The root node of the subtree.
  * @return                The height of the subtree.
@@ -267,8 +265,7 @@ RBTreeNode *rb_tree_node_parent(RBTreeNode *node);
 int rb_tree_subtree_height(RBTreeNode *node);
 
 /**
- * Convert the keys in a red-black tree into a C array.  This allows
- * the tree to be used as an ordered set.
+ * 将红黑树中所有的关键字按中序存放在一个数组中
  *
  * @param tree            The tree.
  * @return                A newly allocated C array containing all the keys
@@ -280,7 +277,7 @@ int rb_tree_subtree_height(RBTreeNode *node);
 RBTreeValue *rb_tree_to_array(RBTree *tree);
 
 /**
- * Retrieve the number of entries in the tree.
+ * 获取红黑树中的节点数
  *
  * @param tree            The tree.
  * @return                The number of key-value pairs stored in the tree.

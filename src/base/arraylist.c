@@ -31,7 +31,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /* 创建自动调整长度的动态数组 */
 
-ArrayList *arraylist_new(unsigned int length){
+ArrayList *arraylist_new(unsigned int length) {
 	ArrayList *new_arraylist;
 
 	/* 如果数组的长度不合法(小于等于0)，使用一个合理的默认值 */
@@ -63,7 +63,7 @@ ArrayList *arraylist_new(unsigned int length){
 	return new_arraylist;
 }
 
-void arraylist_free(ArrayList *arraylist){
+void arraylist_free(ArrayList *arraylist) {
 	/* 不可对NULL释放内存 */
 
 	if (arraylist != NULL) {
@@ -72,7 +72,7 @@ void arraylist_free(ArrayList *arraylist){
 	}
 }
 
-static int arraylist_enlarge(ArrayList *arraylist){
+static int arraylist_enlarge(ArrayList *arraylist) {
 	ArrayListValue *data;
 	unsigned int newsize;
 
@@ -95,7 +95,7 @@ static int arraylist_enlarge(ArrayList *arraylist){
 }
 
 int arraylist_insert(ArrayList *arraylist, unsigned int index,
-                     ArrayListValue data){
+                     ArrayListValue data) {
 	/* 检查下标是否越界 */
 
 	if (index > arraylist->length) {
@@ -126,19 +126,19 @@ int arraylist_insert(ArrayList *arraylist, unsigned int index,
 
 /* 在数组数据尾部插入数据 */
 
-int arraylist_append(ArrayList *arraylist, ArrayListValue data){
+int arraylist_append(ArrayList *arraylist, ArrayListValue data) {
 	return arraylist_insert(arraylist, arraylist->length, data);
 }
 
 /* 在数组首插入数据 */
-int arraylist_prepend(ArrayList *arraylist, ArrayListValue data){
+int arraylist_prepend(ArrayList *arraylist, ArrayListValue data) {
 	return arraylist_insert(arraylist, 0, data);
 }
 
 /* 移除指定范围的内容 */
 
 void arraylist_remove_range(ArrayList *arraylist, unsigned int index,
-                            unsigned int length){
+                            unsigned int length) {
 	/* 检查范围是否合法 */
 
 	if (index > arraylist->length || index + length > arraylist->length) {
@@ -158,14 +158,14 @@ void arraylist_remove_range(ArrayList *arraylist, unsigned int index,
 }
 
 /* 移除指定下标的内容 */
-void arraylist_remove(ArrayList *arraylist, unsigned int index){
+void arraylist_remove(ArrayList *arraylist, unsigned int index) {
 	arraylist_remove_range(arraylist, index, 1);
 }
 
 /* 查找指定元素 */
 int arraylist_index_of(ArrayList *arraylist,
                        ArrayListEqualFunc callback,
-                       ArrayListValue data){
+                       ArrayListValue data) {
 	unsigned int i;
 
 	for (i=0; i<arraylist->length; ++i) {
@@ -177,7 +177,7 @@ int arraylist_index_of(ArrayList *arraylist,
 }
 
 /* 清除数组 */
-void arraylist_clear(ArrayList *arraylist){
+void arraylist_clear(ArrayList *arraylist) {
 	/* 将数组长度设为0即可清理数组 */
 
 	arraylist->length = 0;
@@ -186,7 +186,7 @@ void arraylist_clear(ArrayList *arraylist){
 /* 数组排序 */
 static void arraylist_sort_internal(ArrayListValue *list_data,
                                     unsigned int list_length,
-                                    ArrayListCompareFunc compare_func){
+                                    ArrayListCompareFunc compare_func) {
 	ArrayListValue pivot;
 	ArrayListValue tmp;
 	unsigned int i;
@@ -253,8 +253,7 @@ static void arraylist_sort_internal(ArrayListValue *list_data,
 	                        compare_func);
 }
 
-void arraylist_sort(ArrayList *arraylist, ArrayListCompareFunc compare_func)
-{
+void arraylist_sort(ArrayList *arraylist, ArrayListCompareFunc compare_func) {
 	/* 执行递归排序 */
 
 	arraylist_sort_internal(arraylist->data, arraylist->length,

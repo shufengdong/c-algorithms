@@ -20,7 +20,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include "compare-int.h"
 
-/* Comparison functions for a pointer to an integer */
+/* 比较指针指向的整型数值的函数 */
 
 int int_equal(void *vlocation1, void *vlocation2) {
     int *location1;

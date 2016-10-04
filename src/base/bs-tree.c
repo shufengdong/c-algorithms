@@ -14,7 +14,7 @@ static BsTreeNode *bs_tree_insert(BsTree *tree, BsTreeKey key, BiTreeValue value
     BsTreeNode *newNode;
     BsTreeNode *previousNode;
 
-    /* Walk down the tree until we reach a NULL pointer */
+    /* 遍历二叉查找树，一直到空指针处 */
 
     rover = &(((BiTree *)tree)->rootNode);
     previousNode = NULL;
@@ -28,7 +28,7 @@ static BsTreeNode *bs_tree_insert(BsTree *tree, BsTreeKey key, BiTreeValue value
         }
     }
 
-    /* Create a new node.  Use the last node visited as the parent link. */
+    /* 创建一个新节点，以遍历的路径上最后一个节点为双亲节点 */
 
     newNode = (BsTreeNode *) malloc(sizeof(BsTreeNode));
 
@@ -42,11 +42,11 @@ static BsTreeNode *bs_tree_insert(BsTree *tree, BsTreeKey key, BiTreeValue value
     ((BiTreeNode *)newNode)->value = value;
     newNode->key = key;
 
-    /* Insert at the NULL pointer that was reached */
+    /* 在遍历到达的空指针处插入节点 */
 
     *rover = newNode;
 
-    /* Keep track of the number of entries */
+    /* 更新节点数 */
 
     ++((BiTree *)tree)->nodeNum;
 
@@ -55,19 +55,49 @@ static BsTreeNode *bs_tree_insert(BsTree *tree, BsTreeKey key, BiTreeValue value
 
 
 static void bs_tree_remove_node(BsTree *_this, BsTreeNode * node) {
-    //todo
+    bs_tree_remove_by_key(_this, node->key);
 }
 
 static int bs_tree_remove_by_key(BsTree *_this, BsTreeKey key) {
-    return 0; //todo
+    BsTreeNode *node, *tmpCell;
+    	node = bs_tree_lookup_node(_this, key);
+    	int keyValue;
+    	if(node != NULL) {
+    		/* 两个孩子节点 */
+    		if(node->base.children[BI_TREE_NODE_LEFT] != NULL &&
+    				node->base.children[BI_TREE_NODE_RIGHT] != NULL) {
+    			/* 用右子树的最小节点替换 */
+    			tmpCell = bs_tree_find_min(node->base.children[BI_TREE_NODE_RIGHT]);
+    			keyValue = *((int *)tmpCell->key);
+    			bs_tree_remove_by_key (_this, tmpCell->key);
+    			node->key = &keyValue;
+    		}
+    		else {	/* 有一个或无孩子节点 */
+    			if(node->base.children[BI_TREE_NODE_LEFT] == NULL) {
+    				/* 判断node是左孩子还是右孩子节点指针 */
+    				if(int_compare(((BsTreeNode *)node->base.parent)->key, node->key))
+    					node->base.parent->children[BI_TREE_NODE_LEFT] = node->base.children[BI_TREE_NODE_RIGHT];
+    				else
+    					node->base.parent->children[BI_TREE_NODE_RIGHT] = node->base.children[BI_TREE_NODE_RIGHT];
+    			}
+    			else if(node->base.children[BI_TREE_NODE_RIGHT] == NULL) {
+    				if(int_compare(((BsTreeNode *)node->base.parent)->key, node->key))
+    					node->base.parent->children[BI_TREE_NODE_LEFT] = node->base.children[BI_TREE_NODE_LEFT];
+    				else
+    					node->base.parent->children[BI_TREE_NODE_RIGHT] = node->base.children[BI_TREE_NODE_LEFT];
+    			}
+    			free(node);
+    		}
+    		return 1;
+    	}
+    return 0;
 }
 
 static BsTreeNode * bs_tree_lookup_node(BsTree *tree, BsTreeKey key) {
     BsTreeNode *node;
     int diff;
 
-    /* Search down the tree and attempt to find the node which
-     * has the specified key */
+    /* 搜索二叉查找树并且寻找含有特定关键字的节点 */
 
     node = ((BiTree *)tree)->rootNode;
 
@@ -77,7 +107,7 @@ static BsTreeNode * bs_tree_lookup_node(BsTree *tree, BsTreeKey key) {
 
         if (diff == 0) {
 
-            /* Keys are equal: return this node */
+            /* 关键字相同，返回该节点 */
 
             return node;
 
@@ -88,7 +118,7 @@ static BsTreeNode * bs_tree_lookup_node(BsTree *tree, BsTreeKey key) {
         }
     }
 
-    /* Not found */
+    /* 未找到 */
 
     return NULL;
 }
@@ -96,7 +126,7 @@ static BsTreeNode * bs_tree_lookup_node(BsTree *tree, BsTreeKey key) {
 BiTreeValue bs_tree_lookup(BsTree *tree, BsTreeKey key) {
     BsTreeNode *node;
 
-    /* Find the node */
+    /* 寻找节点 */
 
     node = bs_tree_lookup_node(tree, key);
 
@@ -108,7 +138,7 @@ BiTreeValue bs_tree_lookup(BsTree *tree, BsTreeKey key) {
 }
 
 
-/* Binary Tree new */
+/* 建立一棵新的二叉查找树 */
 
 BsTree * bs_tree_new(BsTreeCompareFunc compareFunc) {
     BsTree *newTree;

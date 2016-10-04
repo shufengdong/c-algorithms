@@ -59,7 +59,7 @@ extern "C" {
 #endif
 
 /**
- * An AVL tree balanced binary tree.
+ * 二叉平衡树结构
  *
  * @see avl_tree_new
  */
@@ -69,7 +69,7 @@ typedef struct _AVLTree AVLTree;
 /**
  * A key for an @ref AVLTree.
  */
-
+/* 二叉平衡树的关键字 */
 typedef void *AVLTreeKey;
 
 /**
@@ -81,11 +81,11 @@ typedef void *AVLTreeValue;
 /**
  * A null @ref AVLTreeValue.
  */
-
+/* 二叉平衡树的空指针数据 */
 #define AVL_TREE_NULL ((void *) 0)
 
 /**
- * A node in an AVL tree.
+ * 二叉平衡树节点
  *
  * @see avl_tree_node_left_child
  * @see avl_tree_node_right_child
@@ -99,14 +99,14 @@ typedef struct _AVLTreeNode AVLTreeNode;
 /**
  * An @ref AVLTreeNode can have left and right children.
  */
-
+/* 二叉平衡树的左、右孩子标记 */
 typedef enum {
     AVL_TREE_NODE_LEFT = 0,
     AVL_TREE_NODE_RIGHT = 1
 } AVLTreeNodeSide;
 
 /**
- * Type of function used to compare keys in an AVL tree.
+ * 比较二叉平衡树关键字的函数
  *
  * @param value1           The first key.
  * @param value2           The second key.
@@ -119,7 +119,7 @@ typedef enum {
 typedef int (*AVLTreeCompareFunc)(AVLTreeValue value1, AVLTreeValue value2);
 
 /**
- * Create a new AVL tree.
+ * 建立一棵新的二叉平衡树
  *
  * @param compare_func    Function to use when comparing keys in the tree.
  * @return                A new AVL tree, or NULL if it was not possible
@@ -129,7 +129,7 @@ typedef int (*AVLTreeCompareFunc)(AVLTreeValue value1, AVLTreeValue value2);
 AVLTree *avl_tree_new(AVLTreeCompareFunc compare_func);
 
 /**
- * Destroy an AVL tree.
+ * 销毁一棵二叉平衡树
  *
  * @param tree            The tree to destroy.
  */
@@ -137,7 +137,7 @@ AVLTree *avl_tree_new(AVLTreeCompareFunc compare_func);
 void avl_tree_free(AVLTree *tree);
 
 /**
- * Insert a new key-value pair into an AVL tree.
+ * 在二叉平衡树中插入一个节点
  *
  * @param tree            The tree.
  * @param key             The key to insert.
@@ -150,7 +150,7 @@ void avl_tree_free(AVLTree *tree);
 AVLTreeNode *avl_tree_insert(AVLTree *tree, AVLTreeKey key, AVLTreeValue value);
 
 /**
- * Remove a node from a tree.
+ * 删除一个给定的节点
  *
  * @param tree            The tree.
  * @param node            The node to remove
@@ -159,8 +159,7 @@ AVLTreeNode *avl_tree_insert(AVLTree *tree, AVLTreeKey key, AVLTreeValue value);
 void avl_tree_remove_node(AVLTree *tree, AVLTreeNode *node);
 
 /**
- * Remove an entry from a tree, specifying the key of the node to
- * remove.
+ * 给定关键字，删除一个节点
  *
  * @param tree            The tree.
  * @param key             The key of the node to remove.
@@ -172,8 +171,7 @@ void avl_tree_remove_node(AVLTree *tree, AVLTreeNode *node);
 int avl_tree_remove(AVLTree *tree, AVLTreeKey key);
 
 /**
- * Search an AVL tree for a node with a particular key.  This uses
- * the tree as a mapping.
+ * 给定关键字，查找节点并返回该节点的指针
  *
  * @param tree            The AVL tree to search.
  * @param key             The key to search for.
@@ -195,11 +193,11 @@ AVLTreeNode *avl_tree_lookup_node(AVLTree *tree, AVLTreeKey key);
  *                        @ref AVL_TREE_NULL if no entry with the given key is
  *                        found.
  */
-
+/* 给定关键字，查找节点并返回节点中的数据 */
 AVLTreeValue avl_tree_lookup(AVLTree *tree, AVLTreeKey key);
 
 /**
- * Find the root node of a tree.
+ * 查找二叉平衡树的根节点
  *
  * @param tree            The tree.
  * @return                The root node of the tree, or NULL if the tree is
@@ -209,7 +207,7 @@ AVLTreeValue avl_tree_lookup(AVLTree *tree, AVLTreeKey key);
 AVLTreeNode *avl_tree_root_node(AVLTree *tree);
 
 /**
- * Retrieve the key for a given tree node.
+ * 获取给定节点的关键字
  *
  * @param node            The tree node.
  * @return                The key to the given node.
@@ -218,7 +216,7 @@ AVLTreeNode *avl_tree_root_node(AVLTree *tree);
 AVLTreeKey avl_tree_node_key(AVLTreeNode *node);
 
 /**
- * Retrieve the value at a given tree node.
+ * 获取给定节点的数据
  *
  * @param node            The tree node.
  * @return                The value at the given node.
@@ -227,7 +225,7 @@ AVLTreeKey avl_tree_node_key(AVLTreeNode *node);
 AVLTreeValue avl_tree_node_value(AVLTreeNode *node);
 
 /**
- * Find the child of a given tree node.
+ * 查找给定节点的孩子节点
  *
  * @param node            The tree node.
  * @param side            Which child node to get (left or right)
@@ -238,7 +236,7 @@ AVLTreeValue avl_tree_node_value(AVLTreeNode *node);
 AVLTreeNode *avl_tree_node_child(AVLTreeNode *node, AVLTreeNodeSide side);
 
 /**
- * Find the parent node of a given tree node.
+ * 查找给定节点的双亲节点
  *
  * @param node            The tree node.
  * @return                The parent node of the tree node, or NULL if
@@ -248,7 +246,7 @@ AVLTreeNode *avl_tree_node_child(AVLTreeNode *node, AVLTreeNodeSide side);
 AVLTreeNode *avl_tree_node_parent(AVLTreeNode *node);
 
 /**
- * Find the height of a subtree.
+ * 计算子树的高度
  *
  * @param node            The root node of the subtree.
  * @return                The height of the subtree.
@@ -257,8 +255,7 @@ AVLTreeNode *avl_tree_node_parent(AVLTreeNode *node);
 int avl_tree_subtree_height(AVLTreeNode *node);
 
 /**
- * Convert the keys in an AVL tree into a C array.  This allows
- * the tree to be used as an ordered set.
+ * 将二叉平衡树中所有的关键字按中序存放在一个数组中
  *
  * @param tree            The tree.
  * @return                A newly allocated C array containing all the keys
@@ -270,7 +267,7 @@ int avl_tree_subtree_height(AVLTreeNode *node);
 AVLTreeValue *avl_tree_to_array(AVLTree *tree);
 
 /**
- * Retrieve the number of entries in the tree.
+ * 获取二叉平衡树中的节点数
  *
  * @param tree            The tree.
  * @return                The number of key-value pairs stored in the tree.

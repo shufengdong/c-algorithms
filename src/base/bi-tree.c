@@ -21,11 +21,11 @@ static void bi_tree_remove_subtree(BiTree *tree, BiTreeNode *node) {
 }
 
 static void bi_tree_free(BiTree *tree) {
-    /* Destroy all nodes */
+    /* 销毁所有的节点 */
 
     bi_tree_free_subtree(tree->rootNode);
 
-    /* Free back the main tree data structure */
+    /* 释放二叉树结构内存 */
 
     free(tree);
 }
@@ -91,7 +91,7 @@ static BiTreeNode *bi_tree_node_parent(BiTreeNode *node) {
     return node->parent;
 }
 
-/* Binary Tree new */
+/* 建立一棵新的二叉树 */
 
 BiTree * bi_tree_new() {
     BiTree *newTree;

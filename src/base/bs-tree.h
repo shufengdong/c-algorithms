@@ -9,19 +9,19 @@ extern "C" {
 /**
  * A key for an @ref BsTree.
  */
-
+/* 二叉查找树的关键字 */
 typedef void *BsTreeKey;
 
 /**
- * An binary sort tree
+ * 二叉查找树
  *
  * @see bs_tree_new
  */
 
 typedef struct _BsTree BsTree;
 
+/* 二叉查找树节点 */
 typedef struct _BsTreeNode BsTreeNode;
-
 
 struct _BsTreeNode {
     struct _BiTreeNode base;
@@ -29,7 +29,7 @@ struct _BsTreeNode {
 };
 
 /**
- * Type of function used to compare keys in an binary sort tree.
+ * 比较二叉查找树关键字的函数
  *
  * @param value1           The first key.
  * @param value2           The second key.
@@ -42,14 +42,13 @@ struct _BsTreeNode {
 typedef int (*BsTreeCompareFunc)(BiTreeValue value1, BiTreeValue value2);
 
 struct _BsTree {
-    /* base  */
     struct _BiTree base;
-    /*查找时比较两个key时用的函数*/
+    /* 查找时比较两个key时用的函数 */
     BsTreeCompareFunc compareFunc;
 
 
     /**
-     * Insert a new key-value pair into an AVL tree.
+     * 在二叉查找树中插入一个节点
      *
      * @param tree            The tree.
      * @param key             The key to insert.
@@ -62,7 +61,7 @@ struct _BsTree {
     BiTreeNode * (*insert_key_value)(BsTree *tree, BsTreeKey key, BiTreeValue value);
 
     /**
-     * Remove a node from a tree.
+     * 删除一个给定的节点
      *
      * @param tree            The tree.
      * @param node            The node to remove
@@ -72,8 +71,7 @@ struct _BsTree {
 
 
     /**
-     * Remove an entry from a tree, specifying the key of the node to
-     * remove.
+     * 给定关键字，删除节点
      *
      * @param tree            The tree.
      * @param key             The key of the node to remove.
@@ -85,8 +83,7 @@ struct _BsTree {
     int (*remove_by_key)(BsTree *_this, BsTreeKey key);
 
     /**
-     * Search an AVL tree for a node with a particular key.  This uses
-     * the tree as a mapping.
+     * 给定关键字，查找节点并返回该节点的指针
      *
      * @param tree            The AVL tree to search.
      * @param key             The key to search for.
@@ -108,13 +105,13 @@ struct _BsTree {
      *                        @ref AVL_TREE_NULL if no entry with the given key is
      *                        found.
      */
-
+    /* 给定关键字，查找节点并返回节点中的数据 */
     BiTreeValue (*lookup_value)(BsTree *_this, BsTreeKey key);
 };
 
 
 /**
- * Create a new binary sort tree.
+ * 建立一棵新的二叉查找树
  *
  * @param compare_func    Function to use when comparing keys in the tree.
  * @return                A new binary sort tree, or NULL if it was not possible

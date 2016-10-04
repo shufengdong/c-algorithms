@@ -37,8 +37,7 @@ extern "C" {
 #endif
 
 /**
- * Compare the integer values pointed at by two pointers to determine
- * if they are equal.
+ * 比较两个指针指向的整型数值是否相等
  *
  * @param location1       Pointer to the first value to compare.
  * @param location2       Pointer to the second value to compare.
@@ -49,7 +48,7 @@ extern "C" {
 int int_equal(void *location1, void *location2);
 
 /**
- * Compare the integer values pointed at by two pointers.
+ * 比较两个指针指向的整型数值的大小
  *
  * @param location1        Pointer to the first value to compare.
  * @param location2        Pointer to the second value to compare.

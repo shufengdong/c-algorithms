@@ -28,7 +28,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "alloc-testing.h"
 #endif
 
-/* AVL Tree (balanced binary search tree) */
+/* 二叉平衡树节点结构 */
 
 struct _AVLTreeNode {
     AVLTreeNode *children[2];
@@ -72,11 +72,11 @@ static void avl_tree_free_subtree(AVLTree *tree, AVLTreeNode *node) {
 }
 
 void avl_tree_free(AVLTree *tree) {
-    /* Destroy all nodes */
+    /* 销毁所有节点 */
 
     avl_tree_free_subtree(tree, tree->root_node);
 
-    /* Free back the main tree data structure */
+    /* 释放二叉平衡树结构内存 */
 
     free(tree);
 }
@@ -89,9 +89,7 @@ int avl_tree_subtree_height(AVLTreeNode *node) {
     }
 }
 
-/* Update the "height" variable of a node, from the heights of its
- * children.  This does not update the height variable of any parent
- * nodes. */
+/* 更新节点的高度 */
 
 static void avl_tree_update_height(AVLTreeNode *node) {
     AVLTreeNode *left_subtree;
@@ -110,7 +108,7 @@ static void avl_tree_update_height(AVLTreeNode *node) {
     }
 }
 
-/* Find what side a node is relative to its parent */
+/* 找出节点连在其双亲节点的哪一侧 */
 
 static AVLTreeNodeSide avl_tree_node_parent_side(AVLTreeNode *node) {
     if (node->parent->children[AVL_TREE_NODE_LEFT] == node) {
@@ -120,19 +118,19 @@ static AVLTreeNodeSide avl_tree_node_parent_side(AVLTreeNode *node) {
     }
 }
 
-/* Replace node1 with node2 at its parent. */
+/* 将节点1用节点2替换 */
 
 static void avl_tree_node_replace(AVLTree *tree, AVLTreeNode *node1,
                                   AVLTreeNode *node2) {
     int side;
 
-    /* Set the node's parent pointer. */
+    /* 设置节点的双亲指针 */
 
     if (node2 != NULL) {
         node2->parent = node1->parent;
     }
 
-    /* The root node? */
+    /* 是根节点? */
 
     if (node1->parent == NULL) {
         tree->root_node = node2;
@@ -165,13 +163,12 @@ static void avl_tree_node_replace(AVLTree *tree, AVLTreeNode *node1,
  *     / \                             / \
  *    A   C                           C   E
  */
-
+/* 单旋转。node是待旋转子树的根节点，direction是旋转的方向 */
 static AVLTreeNode *avl_tree_rotate(AVLTree *tree, AVLTreeNode *node,
                                     AVLTreeNodeSide direction) {
     AVLTreeNode *new_root;
 
-    /* The child of this node will take its place:
-       for a left rotation, it is the right child, and vice versa. */
+    /* 根节点的孩子节点将取代其位置：左旋转则右孩子取代，反之左孩子取代 */
 
     new_root = node->children[1-direction];
 
@@ -179,12 +176,12 @@ static AVLTreeNode *avl_tree_rotate(AVLTree *tree, AVLTreeNode *node,
 
     avl_tree_node_replace(tree, node, new_root);
 
-    /* Rearrange pointers */
+    /* 重置指针变量 */
 
     node->children[1-direction] = new_root->children[direction];
     new_root->children[direction] = node;
 
-    /* Update parent references */
+    /* 更新双亲节点 */
 
     node->parent = new_root;
 
@@ -192,7 +189,7 @@ static AVLTreeNode *avl_tree_rotate(AVLTree *tree, AVLTreeNode *node,
         node->children[1-direction]->parent = node;
     }
 
-    /* Update heights of the affected nodes */
+    /* 更新节点的高度 */
 
     avl_tree_update_height(new_root);
     avl_tree_update_height(node);
@@ -201,7 +198,7 @@ static AVLTreeNode *avl_tree_rotate(AVLTree *tree, AVLTreeNode *node,
 }
 
 
-/* Balance a particular tree node.
+/* 平衡一个节点
  *
  * Returns the root node of the new subtree which is replacing the
  * old one. */
@@ -215,66 +212,60 @@ static AVLTreeNode *avl_tree_node_balance(AVLTree *tree, AVLTreeNode *node) {
     left_subtree = node->children[AVL_TREE_NODE_LEFT];
     right_subtree = node->children[AVL_TREE_NODE_RIGHT];
 
-    /* Check the heights of the child trees.  If there is an unbalance
-     * (difference between left and right > 2), then rotate nodes
-     * around to fix it */
+    /* 检查孩子节点的高度。如果不平衡，则旋转 */
 
     diff = avl_tree_subtree_height(right_subtree)
          - avl_tree_subtree_height(left_subtree);
 
     if (diff >= 2) {
 
-        /* Biased toward the right side too much. */
+        /* 偏向右侧太多 */
 
         child = right_subtree;
 
         if (avl_tree_subtree_height(child->children[AVL_TREE_NODE_RIGHT])
           < avl_tree_subtree_height(child->children[AVL_TREE_NODE_LEFT])) {
 
-            /* If the right child is biased toward the left
-             * side, it must be rotated right first (double
-             * rotation) */
+            /* 如果右孩子偏向左侧，它需要首先右旋转(双旋转) */
 
             avl_tree_rotate(tree, right_subtree,
                             AVL_TREE_NODE_RIGHT);
         }
 
-        /* Perform a left rotation.  After this, the right child will
+        /* 进行左旋转.  After this, the right child will
          * take the place of this node.  Update the node pointer. */
 
         node = avl_tree_rotate(tree, node, AVL_TREE_NODE_LEFT);
 
     } else if (diff <= -2) {
 
-        /* Biased toward the left side too much. */
+        /* 偏向左侧太多 */
 
         child = node->children[AVL_TREE_NODE_LEFT];
 
         if (avl_tree_subtree_height(child->children[AVL_TREE_NODE_LEFT])
           < avl_tree_subtree_height(child->children[AVL_TREE_NODE_RIGHT])) {
 
-            /* If the left child is biased toward the right
-             * side, it must be rotated right left (double
-             * rotation) */
+            /* 如果左孩子偏向右侧，它需要首先左旋转(双旋转) */
 
             avl_tree_rotate(tree, left_subtree,
                             AVL_TREE_NODE_LEFT);
         }
 
-        /* Perform a right rotation.  After this, the left child will
+        /* 进行右旋转.  After this, the left child will
          * take the place of this node.  Update the node pointer. */
 
         node = avl_tree_rotate(tree, node, AVL_TREE_NODE_RIGHT);
     }
 
-    /* Update the height of this node */
+    /* 更新节点的高度 */
 
     avl_tree_update_height(node);
 
     return node;
 }
 
-/* Walk up the tree from the given node, performing any needed rotations */
+/* 从给定的节点开始向根节点遍历，进行需要的旋转操作 */
 
 static void avl_tree_balance_to_root(AVLTree *tree, AVLTreeNode *node) {
     AVLTreeNode *rover;
@@ -283,11 +274,11 @@ static void avl_tree_balance_to_root(AVLTree *tree, AVLTreeNode *node) {
 
     while (rover != NULL) {
 
-        /* Balance this node if necessary */
+        /* 使节点平衡 */
 
         rover = avl_tree_node_balance(tree, rover);
 
-        /* Go to this node's parent */
+        /* 指向该节点的双亲节点 */
 
         rover = rover->parent;
     }
@@ -298,7 +289,7 @@ AVLTreeNode *avl_tree_insert(AVLTree *tree, AVLTreeKey key, AVLTreeValue value) 
     AVLTreeNode *new_node;
     AVLTreeNode *previous_node;
 
-    /* Walk down the tree until we reach a NULL pointer */
+    /* 遍历二叉平衡树，一直到空指针处 */
 
     rover = &tree->root_node;
     previous_node = NULL;
@@ -312,7 +303,7 @@ AVLTreeNode *avl_tree_insert(AVLTree *tree, AVLTreeKey key, AVLTreeValue value) 
         }
     }
 
-    /* Create a new node.  Use the last node visited as the parent link. */
+    /* 创建一个新节点，以遍历的路径上最后一个节点为双亲节点 */
 
     new_node = (AVLTreeNode *) malloc(sizeof(AVLTreeNode));
 
@@ -327,22 +318,22 @@ AVLTreeNode *avl_tree_insert(AVLTree *tree, AVLTreeKey key, AVLTreeValue value) 
     new_node->value = value;
     new_node->height = 1;
 
-    /* Insert at the NULL pointer that was reached */
+    /* 在遍历到达的空指针处插入节点 */
 
     *rover = new_node;
 
-    /* Rebalance the tree, starting from the previous node. */
+    /* 使树重新平衡 */
 
     avl_tree_balance_to_root(tree, previous_node);
 
-    /* Keep track of the number of entries */
+    /* 更新节点数 */
 
     ++tree->num_nodes;
 
     return new_node;
 }
 
-/* Find the nearest node to the given node, to replace it.
+/* 找到与给定节点关键字最接近的节点，将其从树中断开
  * The node returned is unlinked from the tree.
  * Returns NULL if the node has no children. */
 
@@ -358,14 +349,13 @@ static AVLTreeNode *avl_tree_node_get_replacement(AVLTree *tree,
     left_subtree = node->children[AVL_TREE_NODE_LEFT];
     right_subtree = node->children[AVL_TREE_NODE_RIGHT];
 
-    /* No children? */
+    /* 无孩子节点? */
 
     if (left_subtree == NULL && right_subtree == NULL) {
         return NULL;
     }
 
-    /* Pick a node from whichever subtree is taller.  This helps to
-     * keep the tree balanced. */
+    /* 从更高的子树中选择节点，以使树保持平衡 */
 
     left_height = avl_tree_subtree_height(left_subtree);
     right_height = avl_tree_subtree_height(right_subtree);
@@ -376,7 +366,7 @@ static AVLTreeNode *avl_tree_node_get_replacement(AVLTree *tree,
         side = AVL_TREE_NODE_LEFT;
     }
 
-    /* Search down the tree, back towards the center. */
+    /* 搜索关键字最接近的节点 */
 
     result = node->children[side];
 
@@ -384,8 +374,7 @@ static AVLTreeNode *avl_tree_node_get_replacement(AVLTree *tree,
         result = result->children[1-side];
     }
 
-    /* Unlink the result node, and hook in its remaining child
-     * (if it has one) to replace it. */
+    /* 断开节点，如果它有孩子节点则取代其位置 */
 
     child = result->children[side];
     avl_tree_node_replace(tree, result, child);
@@ -397,37 +386,31 @@ static AVLTreeNode *avl_tree_node_get_replacement(AVLTree *tree,
     return result;
 }
 
-/* Remove a node from a tree */
+/* 删除一个节点 */
 
 void avl_tree_remove_node(AVLTree *tree, AVLTreeNode *node) {
     AVLTreeNode *swap_node;
     AVLTreeNode *balance_startpoint;
     int i;
 
-    /* The node to be removed must be swapped with an "adjacent"
-     * node, ie. one which has the closest key to this one. Find
-     * a node to swap with. */
+    /* 待删除的节点需要用关键字与其最接近的节点取代其位置，找到交换的节点 */
 
     swap_node = avl_tree_node_get_replacement(tree, node);
 
     if (swap_node == NULL) {
 
-        /* This is a leaf node and has no children, therefore
-         * it can be immediately removed. */
+        /* 这是一个叶子节点，可以直接删除 */
 
-        /* Unlink this node from its parent. */
+        /* 将节点与其双亲断开 */
 
         avl_tree_node_replace(tree, node, NULL);
 
-        /* Start rebalancing from the parent of the original node */
+        /* 从原节点的双亲开始重新平衡 */
 
         balance_startpoint = node->parent;
 
     } else {
-        /* We will start rebalancing from the old parent of the
-         * swap node.  Sometimes, the old parent is the node we
-         * are removing, in which case we must start rebalancing
-         * from the swap node. */
+        /* 从交换的节点的原双亲开始重新平衡。当原双亲是待删除节点时，从交换的节点开始重新平衡 */
 
         if (swap_node->parent == node) {
             balance_startpoint = swap_node;
@@ -435,7 +418,7 @@ void avl_tree_remove_node(AVLTree *tree, AVLTreeNode *node) {
             balance_startpoint = swap_node->parent;
         }
 
-        /* Copy references in the node into the swap node */
+        /* 将与原节点相关的指针引用复制到交换的节点中 */
 
         for (i=0; i<2; ++i) {
             swap_node->children[i] = node->children[i];
@@ -452,35 +435,35 @@ void avl_tree_remove_node(AVLTree *tree, AVLTreeNode *node) {
         avl_tree_node_replace(tree, node, swap_node);
     }
 
-    /* Destroy the node */
+    /* 销毁节点 */
 
     free(node);
 
-    /* Keep track of the number of nodes */
+    /* 更新节点数 */
 
     --tree->num_nodes;
 
-    /* Rebalance the tree */
+    /* 使树重新平衡 */
 
     avl_tree_balance_to_root(tree, balance_startpoint);
 }
 
-/* Remove a node by key */
+/* 给定关键字，删除一个节点 */
 
 int avl_tree_remove(AVLTree *tree, AVLTreeKey key) {
     AVLTreeNode *node;
 
-    /* Find the node to remove */
+    /* 找到待删除的节点 */
 
     node = avl_tree_lookup_node(tree, key);
 
     if (node == NULL) {
-        /* Not found in tree */
+        /* 未找到 */
 
         return 0;
     }
 
-    /* Remove the node */
+    /* 删除节点 */
 
     avl_tree_remove_node(tree, node);
 
@@ -491,8 +474,7 @@ AVLTreeNode *avl_tree_lookup_node(AVLTree *tree, AVLTreeKey key) {
     AVLTreeNode *node;
     int diff;
 
-    /* Search down the tree and attempt to find the node which
-     * has the specified key */
+    /* 在树中查找具有指定关键字的节点 */
 
     node = tree->root_node;
 
@@ -502,7 +484,7 @@ AVLTreeNode *avl_tree_lookup_node(AVLTree *tree, AVLTreeKey key) {
 
         if (diff == 0) {
 
-            /* Keys are equal: return this node */
+            /* 关键字相同则返回该节点 */
 
             return node;
 
@@ -513,7 +495,7 @@ AVLTreeNode *avl_tree_lookup_node(AVLTree *tree, AVLTreeKey key) {
         }
     }
 
-    /* Not found */
+    /* 未找到 */
 
     return NULL;
 }
@@ -521,7 +503,7 @@ AVLTreeNode *avl_tree_lookup_node(AVLTree *tree, AVLTreeKey key) {
 AVLTreeValue avl_tree_lookup(AVLTree *tree, AVLTreeKey key) {
     AVLTreeNode *node;
 
-    /* Find the node */
+    /* 寻找节点 */
 
     node = avl_tree_lookup_node(tree, key);
 
@@ -567,17 +549,17 @@ static void avl_tree_to_array_add_subtree(AVLTreeNode *subtree,
         return;
     }
 
-    /* Add left subtree first */
+    /* 先添加左子树的关键字 */
 
     avl_tree_to_array_add_subtree(subtree->children[AVL_TREE_NODE_LEFT],
                                   array, index);
 
-    /* Add this node */
+    /* 在数组中添加该节点的关键字 */
 
     array[*index] = subtree->key;
     ++*index;
 
-    /* Finally add right subtree */
+    /* 最后添加右子树的关键字 */
 
     avl_tree_to_array_add_subtree(subtree->children[AVL_TREE_NODE_RIGHT],
                                   array, index);
@@ -587,7 +569,7 @@ AVLTreeValue * avl_tree_to_array(AVLTree *tree) {
     AVLTreeValue *array;
     int index;
 
-    /* Allocate the array */
+    /* 申请数组空间 */
 
     array = malloc(sizeof(AVLTreeValue) * tree->num_nodes);
 
@@ -597,7 +579,7 @@ AVLTreeValue * avl_tree_to_array(AVLTree *tree) {
 
     index = 0;
 
-    /* Add all keys */
+    /* 添加所有的关键字 */
 
     avl_tree_to_array_add_subtree(tree->root_node, array, &index);
 

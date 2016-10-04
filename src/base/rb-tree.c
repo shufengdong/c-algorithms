@@ -43,8 +43,7 @@ struct _RBTree {
 	int num_nodes;
 };
 
-static RBTreeNodeSide rb_tree_node_side(RBTreeNode *node)
-{
+static RBTreeNodeSide rb_tree_node_side(RBTreeNode *node) {
 	if (node->parent->children[RB_TREE_NODE_LEFT] == node) {
 		return RB_TREE_NODE_LEFT;
 	} else {
@@ -52,8 +51,7 @@ static RBTreeNodeSide rb_tree_node_side(RBTreeNode *node)
 	}
 }
 
-static RBTreeNode *rb_tree_node_sibling(RBTreeNode *node)
-{
+static RBTreeNode *rb_tree_node_sibling(RBTreeNode *node) {
 	RBTreeNodeSide side;
 
 	side = rb_tree_node_side(node);
@@ -61,25 +59,23 @@ static RBTreeNode *rb_tree_node_sibling(RBTreeNode *node)
 	return node->parent->children[1 - side];
 }
 
-RBTreeNode *rb_tree_node_uncle(RBTreeNode *node)
-{
+RBTreeNode *rb_tree_node_uncle(RBTreeNode *node) {
 	return rb_tree_node_sibling(node->parent);
 }
 
-/* Replace node1 with node2 at its parent. */
+/* 将节点1用节点2替换 */
 
 static void rb_tree_node_replace(RBTree *tree, RBTreeNode *node1,
-                                 RBTreeNode *node2)
-{
+                                 RBTreeNode *node2) {
 	int side;
 
-	/* Set the node's parent pointer. */
+	/* 设置节点的双亲指针 */
 
 	if (node2 != NULL) {
 		node2->parent = node1->parent;
 	}
 
-	/* The root node? */
+	/* 是根节点? */
 
 	if (node1->parent == NULL) {
 		tree->root_node = node2;
@@ -110,14 +106,12 @@ static void rb_tree_node_replace(RBTree *tree, RBTreeNode *node1,
  *     / \                             / \
  *    A   C                           C   E
  */
-
+/* 单旋转。node是待旋转子树的根节点，direction是旋转的方向 */
 static RBTreeNode *rb_tree_rotate(RBTree *tree, RBTreeNode *node,
-                                  RBTreeNodeSide direction)
-{
+                                  RBTreeNodeSide direction) {
 	RBTreeNode *new_root;
 
-	/* The child of this node will take its place:
-	   for a left rotation, it is the right child, and vice versa. */
+	/* 根节点的孩子节点将取代其位置：左旋转则右孩子取代，反之左孩子取代 */
 
 	new_root = node->children[1-direction];
 
@@ -125,12 +119,12 @@ static RBTreeNode *rb_tree_rotate(RBTree *tree, RBTreeNode *node,
 
 	rb_tree_node_replace(tree, node, new_root);
 
-	/* Rearrange pointers */
+	/* 重置指针变量 */
 
 	node->children[1-direction] = new_root->children[direction];
 	new_root->children[direction] = node;
 
-	/* Update parent references */
+	/* 更新双亲节点 */
 
 	node->parent = new_root;
 
@@ -142,8 +136,7 @@ static RBTreeNode *rb_tree_rotate(RBTree *tree, RBTreeNode *node,
 }
 
 
-RBTree *rb_tree_new(RBTreeCompareFunc compare_func)
-{
+RBTree *rb_tree_new(RBTreeCompareFunc compare_func) {
 	RBTree *new_tree;
 
 	new_tree = malloc(sizeof(RBTree));
@@ -159,27 +152,25 @@ RBTree *rb_tree_new(RBTreeCompareFunc compare_func)
 	return new_tree;
 }
 
-static void rb_tree_free_subtree(RBTreeNode *node)
-{
+static void rb_tree_free_subtree(RBTreeNode *node) {
 	if (node != NULL) {
-		/* Recurse to subnodes */
+		/* 递归删除孩子节点 */
 
 		rb_tree_free_subtree(node->children[RB_TREE_NODE_LEFT]);
 		rb_tree_free_subtree(node->children[RB_TREE_NODE_RIGHT]);
 
-		/* Free this node */
+		/* 释放该节点内存 */
 
 		free(node);
 	}
 }
 
-void rb_tree_free(RBTree *tree)
-{
-	/* Free all nodes in the tree */
+void rb_tree_free(RBTree *tree) {
+	/* 销毁树中所有节点 */
 
 	rb_tree_free_subtree(tree->root_node);
 
-	/* Free back the main tree structure */
+	/* 释放红黑树结构内存 */
 
 	free(tree);
 }
@@ -190,20 +181,18 @@ static void rb_tree_insert_case3(RBTree *tree, RBTreeNode *node);
 static void rb_tree_insert_case4(RBTree *tree, RBTreeNode *node);
 static void rb_tree_insert_case5(RBTree *tree, RBTreeNode *node);
 
-/* Insert case 1: If the new node is at the root of the tree, it must
- * be recolored black, as the root is always black. */
+/* 插入情形1：新节点是根节点，则它必须涂成黑色，因为根节点总是黑色的 */
 
-static void rb_tree_insert_case1(RBTree *tree, RBTreeNode *node)
-{
+static void rb_tree_insert_case1(RBTree *tree, RBTreeNode *node) {
 	if (node->parent == NULL) {
 
-		/* The root node is black */
+		/* 根节点是黑色的 */
 
 		node->color = RB_TREE_NODE_BLACK;
 
 	} else {
 
-		/* Not root */
+		/* 不是根节点 */
 
 		rb_tree_insert_case2(tree, node);
 	}
@@ -212,11 +201,9 @@ static void rb_tree_insert_case1(RBTree *tree, RBTreeNode *node)
 /* Insert case 2: If the parent of the new node is red, this
  * conflicts with the red-black tree conditions, as both children
  * of every red node are black. */
-
-static void rb_tree_insert_case2(RBTree *tree, RBTreeNode *node)
-{
-	/* Note that if this function is being called, we already know
-	 * the node has a parent, as it is not the root node. */
+/* 插入情形2：新节点的父节点是红色的 */
+static void rb_tree_insert_case2(RBTree *tree, RBTreeNode *node) {
+	/* 当调用这个函数的时候，已经保证了插入的节点不是根节点 */
 
 	if (node->parent->color != RB_TREE_NODE_BLACK) {
 		rb_tree_insert_case3(tree, node);
@@ -225,14 +212,12 @@ static void rb_tree_insert_case2(RBTree *tree, RBTreeNode *node)
 
 /* Insert case 3: If the parent and uncle are both red, repaint them
  * both black and repaint the grandparent red.  */
-
-static void rb_tree_insert_case3(RBTree *tree, RBTreeNode *node)
-{
+/* 插入情形3：如果父节点及其兄弟节点都是红色的 */
+static void rb_tree_insert_case3(RBTree *tree, RBTreeNode *node) {
 	RBTreeNode *grandparent;
 	RBTreeNode *uncle;
 
-	/* Note that the node must have a grandparent, as the parent
-	 * is red, and the root node is always black. */
+	/* 因为父节点是红色的，所以插入的节点一定存在祖父节点 */
 
 	grandparent = node->parent->parent;
 	uncle = rb_tree_node_uncle(node);
@@ -243,11 +228,12 @@ static void rb_tree_insert_case3(RBTree *tree, RBTreeNode *node)
 		uncle->color = RB_TREE_NODE_BLACK;
 		grandparent->color = RB_TREE_NODE_RED;
 
-		/* Recurse to grandparent */
+		/* 递归上滤直到不再有两个相连的红色节点或到达根处 */
 
 		rb_tree_insert_case1(tree, grandparent);
 
-	} else {
+	}
+	else {
 		rb_tree_insert_case4(tree, node);
 	}
 }
@@ -267,7 +253,7 @@ static void rb_tree_insert_case3(RBTree *tree, RBTreeNode *node)
  *         R  <- node                 R
  *
  */
-
+/* 插入情形4：父节点是红色的，父节点的兄弟节点是黑色的 */
 void rb_tree_insert_case4(RBTree *tree, RBTreeNode *node)
 {
 	RBTreeNode *next_node;
@@ -285,11 +271,10 @@ void rb_tree_insert_case4(RBTree *tree, RBTreeNode *node)
 
 		/* After the rotation, we will continue to case 5, but
 		 * the parent node will be at the bottom. */
-
+        /* 需要进行双旋转。这里旋转一次后成为情形5 */
 		next_node = node->parent;
 
-		/* Rotate around the parent in the opposite direction
-		 * to side. */
+		/* 按插入节点的左右方向的相反方向旋转父节点 */
 
 		rb_tree_rotate(tree, node->parent, 1-side);
 	} else {
@@ -313,9 +298,8 @@ void rb_tree_insert_case4(RBTree *tree, RBTreeNode *node)
  *       N/R      ?                   ?      U/B
  *
  */
-
-void rb_tree_insert_case5(RBTree *tree, RBTreeNode *node)
-{
+/* 插入情形5：插入的节点及其父节点作为作为孩子节点的左右方向相同，都为红色，父节点的兄弟节点为黑色 */
+void rb_tree_insert_case5(RBTree *tree, RBTreeNode *node) {
 	RBTreeNode *parent;
 	RBTreeNode *grandparent;
 	RBTreeNodeSide side;
@@ -325,27 +309,26 @@ void rb_tree_insert_case5(RBTree *tree, RBTreeNode *node)
 
 	/* What side are we, relative to the parent?  This will determine
 	 * the direction that we rotate. */
-
+    /* 插入节点的左右方向 */
 	side = rb_tree_node_side(node);
 
 	/* Rotate at the grandparent, in the opposite direction to side. */
-
+    /* 按相反方向旋转祖父节点 */
 	rb_tree_rotate(tree, grandparent, 1-side);
 
-	/* Recolor the (old) parent and grandparent. */
+	/* 重新着色 */
 
 	parent->color = RB_TREE_NODE_BLACK;
 	grandparent->color = RB_TREE_NODE_RED;
 }
 
-RBTreeNode *rb_tree_insert(RBTree *tree, RBTreeKey key, RBTreeValue value)
-{
+RBTreeNode *rb_tree_insert(RBTree *tree, RBTreeKey key, RBTreeValue value) {
 	RBTreeNode *node;
 	RBTreeNode **rover;
 	RBTreeNode *parent;
 	RBTreeNodeSide side;
 
-	/* Allocate a new node */
+	/* 申请新节点空间 */
 
 	node = malloc(sizeof(RBTreeNode));
 
@@ -353,7 +336,7 @@ RBTreeNode *rb_tree_insert(RBTree *tree, RBTreeKey key, RBTreeValue value)
 		return NULL;
 	}
 
-	/* Set up structure.  Initially, the node is red. */
+	/* 初始化新节点。涂成红色 */
 
 	node->key = key;
 	node->value = value;
@@ -361,18 +344,18 @@ RBTreeNode *rb_tree_insert(RBTree *tree, RBTreeKey key, RBTreeValue value)
 	node->children[RB_TREE_NODE_LEFT] = NULL;
 	node->children[RB_TREE_NODE_RIGHT] = NULL;
 
-	/* First, perform a normal binary tree-style insert. */
+	/* 首先进行正常的二叉平衡树插入操作 */
 
 	parent = NULL;
 	rover = &tree->root_node;
 
 	while (*rover != NULL) {
 
-		/* Update parent */
+		/* 更新父节点指针 */
 
 		parent = *rover;
 
-		/* Choose which path to go down, left or right child */
+		/* 选择搜索路径的方向，向左孩子或右孩子 */
 
 		if (tree->compare_func(value, (*rover)->value) < 0) {
 			side = RB_TREE_NODE_LEFT;
@@ -383,125 +366,109 @@ RBTreeNode *rb_tree_insert(RBTree *tree, RBTreeKey key, RBTreeValue value)
 		rover = &(*rover)->children[side];
 	}
 
-	/* Insert at the position we have reached */
-
+	/* 在搜索到达的位置插入节点 */
 	*rover = node;
 	node->parent = parent;
 
-	/* Possibly reorder the tree. */
-
+	/* 调整树以满足红黑树性质 */
 	rb_tree_insert_case1(tree, node);
 
-	/* Update the node count */
-
+	/* 更新节点数 */
 	++tree->num_nodes;
 
 	return node;
 }
 
-RBTreeNode *rb_tree_lookup_node(RBTree *tree, RBTreeKey key)
-{
+RBTreeNode *rb_tree_lookup_node(RBTree *tree, RBTreeKey key) {
 	RBTreeNode *node;
 	RBTreeNodeSide side;
 	int diff;
 
 	node = tree->root_node;
 
-	/* Search down the tree. */
+	/* 搜索这棵树 */
 
 	while (node != NULL) {
 		diff = tree->compare_func(key, node->key);
 
 		if (diff == 0) {
 			return node;
-		} else if (diff < 0) {
+		}
+		else if (diff < 0) {
 			side = RB_TREE_NODE_LEFT;
-		} else {
+		}
+		else {
 			side = RB_TREE_NODE_RIGHT;
 		}
-
 		node = node->children[side];
 	}
 
-	/* Not found. */
-
+	/* 未找到 */
 	return NULL;
 }
 
-RBTreeValue rb_tree_lookup(RBTree *tree, RBTreeKey key)
-{
+RBTreeValue rb_tree_lookup(RBTree *tree, RBTreeKey key) {
 	RBTreeNode *node;
 
-	/* Find the node for this key. */
-
+	/* 查找具有该关键字的节点 */
 	node = rb_tree_lookup_node(tree, key);
 
 	if (node == NULL) {
 		return RB_TREE_NULL;
-	} else {
+	}
+	else {
 		return node->value;
 	}
 }
 
-void rb_tree_remove_node(RBTree *tree, RBTreeNode *node)
-{
+void rb_tree_remove_node(RBTree *tree, RBTreeNode *node) {
 	/* TODO */
 }
 
-int rb_tree_remove(RBTree *tree, RBTreeKey key)
-{
+int rb_tree_remove(RBTree *tree, RBTreeKey key) {
 	RBTreeNode *node;
 
-	/* Find the node to remove. */
-
+	/* 查找待删除节点 */
 	node = rb_tree_lookup_node(tree, key);
 
 	if (node == NULL) {
 		return 0;
 	}
-
 	rb_tree_remove_node(tree, node);
-
 	return 1;
 }
 
-RBTreeNode *rb_tree_root_node(RBTree *tree)
-{
+RBTreeNode *rb_tree_root_node(RBTree *tree) {
 	return tree->root_node;
 }
 
-RBTreeKey rb_tree_node_key(RBTreeNode *node)
-{
+RBTreeKey rb_tree_node_key(RBTreeNode *node) {
 	return node->key;
 }
 
-RBTreeValue rb_tree_node_value(RBTreeNode *node)
-{
+RBTreeValue rb_tree_node_value(RBTreeNode *node) {
 	return node->value;
 }
 
-RBTreeNode *rb_tree_node_child(RBTreeNode *node, RBTreeNodeSide side)
-{
+RBTreeNode *rb_tree_node_child(RBTreeNode *node, RBTreeNodeSide side) {
 	if (side == RB_TREE_NODE_LEFT || side == RB_TREE_NODE_RIGHT) {
 		return node->children[side];
-	} else {
+	}
+	else {
 		return NULL;
 	}
 }
 
-RBTreeNode *rb_tree_node_parent(RBTreeNode *node)
-{
+RBTreeNode *rb_tree_node_parent(RBTreeNode *node) {
 	return node->parent;
 }
 
-RBTreeValue *rb_tree_to_array(RBTree *tree)
-{
+RBTreeValue *rb_tree_to_array(RBTree *tree) {
 	/* TODO */
 	return NULL;
 }
 
-int rb_tree_num_entries(RBTree *tree)
-{
+int rb_tree_num_entries(RBTree *tree) {
 	return tree->num_nodes;
 }
 

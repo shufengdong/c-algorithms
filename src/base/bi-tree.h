@@ -5,29 +5,27 @@
 extern "C" {
 #endif
 
+/* 二叉树的左、右孩子标记 */
 typedef enum {
     BI_TREE_NODE_LEFT = 0,
     BI_TREE_NODE_RIGHT = 1
 } BiTreeNodeSide;
 
 /**
- * An binary tree
+ * 二叉树结构
  *
  * @see bi_tree_new
  */
-
 typedef struct _BiTree BiTree;
 
 /**
- * A node in an binary tree.
+ * 二叉树节点
  */
-
 typedef struct _BiTreeNode BiTreeNode;
 
 /**
- * A value stored in an @ref binary Tree.
+ * 二叉树中存储的数据
  */
-
 typedef void *BiTreeValue;
 
 struct _BiTreeNode {
@@ -37,19 +35,20 @@ struct _BiTreeNode {
 };
 
 struct _BiTree {
-    /* root node */
+    /* 根节点 */
     BiTreeNode *rootNode;
-    /* count of nodes */
+    /* 树中的节点数 */
     unsigned int nodeNum;
 
     /**
-    * Destroy an binary tree.
+    * 销毁一棵二叉树
     * @param tree  The tree to destroy.
     */
+
     void (*free_tree)(BiTree *_this);
 
     /**
-     * Insert a new key-value pair into an binary tree.
+     * 给定双亲节点和左右的位置，插入一个节点
      *
      * @param tree            The tree.
      * @param value           The value to insert.
@@ -63,7 +62,7 @@ struct _BiTree {
     BiTreeNode * (*insert)(BiTree *_this, BiTreeValue value, BiTreeNode *parent, BiTreeNodeSide side);
 
     /**
-     * Remove a node from a tree.
+     * 删除一个节点
      *
      * @param tree            The tree.
      * @param node            The node to remove
@@ -73,7 +72,7 @@ struct _BiTree {
 
 
     /**
-     * Find the root node of a tree.
+     * 查找二叉树的根节点
      *
      * @param tree            The tree.
      * @return                The root node of the tree, or NULL if the tree is
@@ -84,7 +83,7 @@ struct _BiTree {
 
 
     /**
-     * Retrieve the value at a given tree node.
+     * 获取给定节点中的数据
      *
      * @param node            The tree node.
      * @return                The value at the given node.
@@ -93,7 +92,7 @@ struct _BiTree {
     BiTreeValue (*node_value)(BiTreeNode *node);
 
     /**
-     * Find the child of a given tree node.
+     * 查找给定节点的孩子节点
      *
      * @param node            The tree node.
      * @param side            Which child node to get (left or right)
@@ -104,7 +103,7 @@ struct _BiTree {
     BiTreeNode *(*node_child)(BiTreeNode *node, BiTreeNodeSide side);
 
     /**
-     * Find the parent node of a given tree node.
+     * 查找给定节点的双亲节点
      *
      * @param node            The tree node.
      * @return                The parent node of the tree node, or NULL if
@@ -118,12 +117,12 @@ struct _BiTree {
 /**
  * A null @ref BiTreeValue.
  */
-
+/* 二叉树的空指针数据 */
 #define BI_TREE_NULL ((void *) 0)
 
 
 /**
- * Create a new binary tree.
+ * 建立一棵新的二叉树
  *
  * @return                A new binary tree, or NULL if it was not possible
  *                        to allocate the memory.
