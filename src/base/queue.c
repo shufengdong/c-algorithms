@@ -72,7 +72,7 @@ void queue_free(Queue *queue)
 	free(queue);
 }
 
-int queue_push_head(Queue *queue, QueueValue data)
+int queue_queue_push_head(Queue *queue, QueueValue data)
 {
 	QueueEntry *new_entry;
 
@@ -159,7 +159,7 @@ QueueValue queue_peek_head(Queue *queue)
 	}
 }
 
-int queue_push_tail(Queue *queue, QueueValue data)
+int queue_queue_push_tail(Queue *queue, QueueValue data)
 {
 	QueueEntry *new_entry;
 

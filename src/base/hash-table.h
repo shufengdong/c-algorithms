@@ -52,37 +52,37 @@ extern "C" {
 /**
  * A hash table structure.
  */
-
+/* 散列表结构. */
 typedef struct _HashTable HashTable;
 
 /**
  * Structure used to iterate over a hash table.
  */
-
+/* 散列表迭代器结构，用于遍历链表. */
 typedef struct _HashTableIterator HashTableIterator;
 
 /**
  * Internal structure representing an entry in a hash table.
  */
-
+/* 散列表内部结点的结构. */
 typedef struct _HashTableEntry HashTableEntry;
 
 /**
  * A key to look up a value in a @ref HashTable.
  */
-
+/* 在散列表中查找数据的关键词 */
 typedef void *HashTableKey;
 
 /**
  * A value stored in a @ref HashTable.
  */
-
+/* 存储在散列表中的数据. */
 typedef void *HashTableValue;
 
 /**
  * Definition of a @ref HashTableIterator.
  */
-
+/* 定义散列表迭代器结构. */
 struct _HashTableIterator {
 	HashTable *hash_table;
 	HashTableEntry *next_entry;
@@ -92,7 +92,7 @@ struct _HashTableIterator {
 /**
  * A null @ref HashTableValue.
  */
-
+/* 定义散列表中数据的空指针. */
 #define HASH_TABLE_NULL ((void *) 0)
 
 /**
@@ -102,7 +102,7 @@ struct _HashTableIterator {
  * @param value  The value to generate a hash value for.
  * @return       The hash value.
  */
-
+ /* 在散列表中用来生成关键词散列数的哈希函数. */
 typedef unsigned int (*HashTableHashFunc)(HashTableKey value);
 
 /**
@@ -111,21 +111,21 @@ typedef unsigned int (*HashTableHashFunc)(HashTableKey value);
  * @return   Non-zero if the two keys are equal, zero if the keys are
  *           not equal.
  */
-
+ /* 比较两个关键词是否相同的函数 */
 typedef int (*HashTableEqualFunc)(HashTableKey value1, HashTableKey value2);
 
 /**
  * Type of function used to free keys when entries are removed from a
  * hash table.
  */
-
+ /* 用来在结点移除出散列表时释放一个关键词的函数类型. */
 typedef void (*HashTableKeyFreeFunc)(HashTableKey value);
 
 /**
  * Type of function used to free values when entries are removed from a
  * hash table.
  */
-
+/* 用来在结点移除出散列表时释放一个数值的函数类型. */
 typedef void (*HashTableValueFreeFunc)(HashTableValue value);
 
 /**
@@ -139,7 +139,7 @@ typedef void (*HashTableValueFreeFunc)(HashTableValue value);
  *                             was not possible to allocate the new hash
  *                             table.
  */
-
+/* 创建一个新的散列表. */
 HashTable *hash_table_new(HashTableHashFunc hash_func,
                           HashTableEqualFunc equal_func);
 
@@ -148,7 +148,7 @@ HashTable *hash_table_new(HashTableHashFunc hash_func,
  *
  * @param hash_table           The hash table to destroy.
  */
-
+ /* 销毁一个散列表. */
 void hash_table_free(HashTable *hash_table);
 
 /**
@@ -159,7 +159,7 @@ void hash_table_free(HashTable *hash_table);
  * @param key_free_func        Function used to free keys.
  * @param value_free_func      Function used to free values.
  */
-
+ /* 注册用来释放关键词和数值的函数. */
 void hash_table_register_free_functions(HashTable *hash_table,
                                         HashTableKeyFreeFunc key_free_func,
                                         HashTableValueFreeFunc value_free_func);
@@ -175,7 +175,7 @@ void hash_table_register_free_functions(HashTable *hash_table,
  *                             or zero if it was not possible to allocate
  *                             memory for the new entry.
  */
-
+ /* 在散列表中插入一个值，将会覆写所有已存在的使用相同关键词的结点. */
 int hash_table_insert(HashTable *hash_table,
                       HashTableKey key,
                       HashTableValue value);
@@ -188,7 +188,7 @@ int hash_table_insert(HashTable *hash_table,
  * @return                    The value, or @ref HASH_TABLE_NULL if there
  *                            is no value with that key in the hash table.
  */
-
+ /* 通过关键词在散列表中查找数据. */
 HashTableValue hash_table_lookup(HashTable *hash_table,
                                  HashTableKey key);
 
@@ -200,7 +200,7 @@ HashTableValue hash_table_lookup(HashTable *hash_table,
  * @return                    Non-zero if a key was removed, or zero if the
  *                            specified key was not found in the hash table.
  */
-
+ /* 从散列表中移除一个值. */
 int hash_table_remove(HashTable *hash_table, HashTableKey key);
 
 /**
@@ -209,7 +209,7 @@ int hash_table_remove(HashTable *hash_table, HashTableKey key);
  * @param hash_table          The hash table.
  * @return                    The number of entries in the hash table.
  */
-
+ /* 获得散列表中的结点个数. */
 unsigned int hash_table_num_entries(HashTable *hash_table);
 
 /**
@@ -219,7 +219,7 @@ unsigned int hash_table_num_entries(HashTable *hash_table);
  * @param iter                Pointer to an iterator structure to
  *                            initialise.
  */
-
+ /* 初始化一个散列表迭代器. */
 void hash_table_iterate(HashTable *hash_table, HashTableIterator *iter);
 
 /**
@@ -231,7 +231,7 @@ void hash_table_iterate(HashTable *hash_table, HashTableIterator *iter);
  *                            over, non-zero if there are more values to
  *                            iterate over.
  */
-
+ /* 判断散列表(一个链表)中是否还有关键词来遍历. */
 int hash_table_iter_has_more(HashTableIterator *iterator);
 
 /**
@@ -242,7 +242,7 @@ int hash_table_iter_has_more(HashTableIterator *iterator);
  *                            @ref HASH_TABLE_NULL if there are no more
  *                            keys to iterate over.
  */
-
+ /* 使用散列表迭代器来检索下一个关键词. */
 HashTableValue hash_table_iter_next(HashTableIterator *iterator);
 
 #ifdef __cplusplus

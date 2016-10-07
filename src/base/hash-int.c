@@ -20,7 +20,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include "hash-int.h"
 
-/* Hash function for a pointer to an integer */
+/* 将一个指针转变为整数的哈希函数 */
 
 unsigned int int_hash(void *vlocation)
 {

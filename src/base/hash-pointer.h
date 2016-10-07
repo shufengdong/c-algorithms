@@ -38,6 +38,7 @@ extern "C" {
  * @param location        The pointer
  * @return                A hash key for the pointer.
  */
+ /* 不使用指针指向的域，形成一个指针的哈希关键词 */
 
 unsigned int pointer_hash(void *location);
 

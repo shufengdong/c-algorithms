@@ -23,6 +23,7 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "hash-pointer.h"
 
 /* Hash function for a generic pointer */
+/* 一个指针的哈希函数 */
 
 unsigned int pointer_hash(void *location)
 {

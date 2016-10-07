@@ -38,7 +38,7 @@ extern "C" {
  * @param string           The string.
  * @return                 A hash key for the string.
  */
-
+ /* 为一个字符串生成关键字 */
 unsigned int string_hash(void *string);
 
 /**
@@ -47,6 +47,7 @@ unsigned int string_hash(void *string);
  * @param string           The string.
  * @return                 A hash key for the string.
  */
+/* 忽略字母的大小写，为一个字符串生成关键字 */
 
 unsigned int string_nocase_hash(void *string);
 

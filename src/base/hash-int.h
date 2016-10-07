@@ -38,7 +38,7 @@ extern "C" {
  * @param location        The pointer.
  * @return                A hash key for the value at the location.
  */
-
+ /* 使用指针指向的域，形成一个整数散列关键词 */
 unsigned int int_hash(void *location);
 
 #ifdef __cplusplus
